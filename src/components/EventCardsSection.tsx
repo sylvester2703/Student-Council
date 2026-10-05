@@ -35,17 +35,17 @@ export const EventCardsSection: React.FC<EventCardsSectionProps> = ({ onOpenRegi
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center space-y-3 mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">
-            <Award className="w-3.5 h-3.5 text-emerald-700" />
-            <span>STRICT LIMIT: 30 ENTRIES PER ACTIVITY</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-orange-100 text-orange-900 border border-orange-300 shadow-2xs">
+            <Sparkles className="w-3.5 h-3.5 text-orange-600" />
+            <span>WEDNESDAY, 7TH OCTOBER 2026 • 30 ENTRIES MAX PER EVENT</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-heading">
-            Five Student Competitions
+            Swachh Bharat Week Competitions
           </h2>
 
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            Choose your activity. Every student team receives an official <strong>Certificate of Participation</strong> from the PES Modern College of Engineering Student Council.
+            A flagship campus initiative organized by the <strong>PES MCOE Student Council</strong> on <strong>7th October 2026</strong>. Every student team receives an official Certificate of Participation.
           </p>
         </div>
 

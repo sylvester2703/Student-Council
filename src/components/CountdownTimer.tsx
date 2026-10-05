@@ -70,12 +70,12 @@ export const CountdownTimer: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">EVENT DAY COUNTDOWN</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">SWACHH BHARAT WEEK COUNTDOWN</span>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">
-                {timeLeft.isPast ? "EVENT IN PROGRESS" : "REGISTRATION OPEN"}
+                {timeLeft.isPast ? "EVENT IN PROGRESS" : "OCTOBER 7, 2026"}
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">Flag-off: October 15, 2026 • 09:00 AM IST</p>
+            <p className="text-xs text-slate-500 font-medium">Event Day: Wednesday, October 7, 2026 • 09:00 AM IST</p>
           </div>
         </div>
 

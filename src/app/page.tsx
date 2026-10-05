@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-import { EventCardsSection } from "@/components/EventCardsSection";
 import { CouncilMembersSection } from "@/components/CouncilMembersSection";
+import { AboutCouncilSection } from "@/components/AboutCouncilSection";
+import { EventCardsSection } from "@/components/EventCardsSection";
 import { WasteHuntZoneSystem } from "@/components/WasteHuntZoneSystem";
 import { CertificateDesk } from "@/components/CertificateDesk";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
@@ -38,6 +39,13 @@ export default function HomePage() {
     }
   };
 
+  const handleScrollToSection = (sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   const handleRegistrationSuccessRedirect = (regId: string) => {
     setActiveSubmissionRegId(regId);
     handleOpenSubmit();
@@ -54,7 +62,7 @@ export default function HomePage() {
 
       {/* Main Content Sections */}
       <main className="flex-1">
-        {/* 1. Hero Section (Home) */}
+        {/* 1. Hero Section (Primary Student Council Focus + Oct 7 Spotlight) */}
         <HeroSection
           onOpenRegister={handleOpenRegister}
           onOpenSubmit={handleOpenSubmit}
@@ -63,46 +71,52 @@ export default function HomePage() {
         {/* 2. Student Council Members & Leadership Section (Scroll directly down to see members) */}
         <CouncilMembersSection />
 
-        {/* 3. Three Student Competitions / Activities (Limit 30 entries each) */}
+        {/* 3. About the Student Council, Vision, Mission & 4 Core Pillars */}
+        <AboutCouncilSection
+          onOpenEvents={() => handleScrollToSection("events")}
+          onOpenMembers={() => handleScrollToSection("council-members")}
+        />
+
+        {/* 4. Featured Flagship Event: Swachh Bharat Week Competitions (7th October 2026) */}
         <EventCardsSection
           onOpenRegister={handleOpenRegister}
           onOpenSubmit={handleOpenSubmit}
         />
 
-        {/* 4. Waste Hunt Permitted Campus Zones A–E */}
-        <WasteHuntZoneSystem
-          onOpenRegister={handleOpenRegister}
-          onOpenSubmit={handleOpenSubmit}
-        />
-
-        {/* 5. Official E-Certificate of Participation Desk */}
-        <CertificateDesk />
-
-        {/* 6. Step-by-Step Flow */}
-        <HowItWorksSection
-          onOpenRegister={() => handleOpenRegister()}
-          onOpenSubmit={handleOpenSubmit}
-        />
-
-        {/* 7. Institutional Rulebook */}
-        <RulebookSection />
-
-        {/* 8. Visual Schedule Timeline */}
-        <ScheduleTimeline />
-
-        {/* 9. Interactive Submission & Drive Portal */}
+        {/* 5. Direct Submission Desk & Organizer Google Drive Folder */}
         <SubmissionPortal
           initialRegId={activeSubmissionRegId}
           onOpenRegister={() => handleOpenRegister()}
         />
 
-        {/* 10. Results & Leaderboard */}
+        {/* 6. Waste Hunt Permitted Campus Zones A–E */}
+        <WasteHuntZoneSystem
+          onOpenRegister={handleOpenRegister}
+          onOpenSubmit={handleOpenSubmit}
+        />
+
+        {/* 7. Official Results & Leaderboard Podium */}
         <ResultsLeaderboard />
 
-        {/* 11. Verified Campus Voting */}
+        {/* 8. Official E-Certificate of Participation Desk */}
+        <CertificateDesk />
+
+        {/* 9. Step-by-Step Flow */}
+        <HowItWorksSection
+          onOpenRegister={() => handleOpenRegister()}
+          onOpenSubmit={handleOpenSubmit}
+        />
+
+        {/* 10. Institutional Rulebook */}
+        <RulebookSection />
+
+        {/* 11. Visual Schedule Timeline (7th October 2026) */}
+        <ScheduleTimeline />
+
+        {/* 12. Verified Campus Public Voting */}
         <PeoplesChoiceSection />
 
-        {/* 12. FAQ Section */}
+        {/* 13. FAQ Section */}
         <FaqSection />
       </main>
 
