@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4" />
+      <stop offset="60%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+    <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#fde047" />
+    </linearGradient>
+    <linearGradient id="buildingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+    <linearGradient id="greenBuildingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bbf7d0" />
+      <stop offset="100%" stop-color="#86efac" />
+    </linearGradient>
+    <linearGradient id="grassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#skyGrad)" rx="24" />
+
+  <!-- Soft geometric background rings -->
+  <circle cx="700" cy="120" r="140" fill="#f0fdf4" />
+  <circle cx="700" cy="120" r="80" fill="url(#sunGrad)" opacity="0.6" />
+
+  <!-- College Campus Silhouette Buildings -->
+  <rect x="80" y="240" width="160" height="240" rx="4" fill="url(#buildingGrad)" opacity="0.85" />
+  <!-- Windows -->
+  <rect x="100" y="270" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="140" y="270" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="180" y="270" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="100" y="320" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="140" y="320" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="180" y="320" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="100" y="370" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="140" y="370" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+  <rect x="180" y="370" width="24" height="30" rx="2" fill="#ffffff" opacity="0.9" />
+
+  <!-- Central Modern Academic Block with Solar Rooftop -->
+  <rect x="220" y="180" width="280" height="300" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
+  <!-- Solar panels on roof -->
+  <polygon points="230,178 350,150 490,178 370,178" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5" />
+  <polygon points="245,176 345,153 370,176" fill="#0369a1" opacity="0.6" />
+  <text x="360" y="220" font-family="sans-serif" font-size="12" font-weight="800" fill="#0f172a" text-anchor="middle" letter-spacing="1.5">PES MODERN COLLEGE OF ENGG</text>
+  <line x1="260" y1="230" x2="460" y2="230" stroke="#16a34a" stroke-width="3" />
+
+  <!-- Modern Grid Glass Windows -->
+  <g fill="#e0f2fe" stroke="#bae6fd" stroke-width="1">
+    <rect x="250" y="250" width="45" height="40" rx="3" />
+    <rect x="305" y="250" width="45" height="40" rx="3" />
+    <rect x="365" y="250" width="45" height="40" rx="3" />
+    <rect x="425" y="250" width="45" height="40" rx="3" />
+    <rect x="250" y="310" width="45" height="40" rx="3" />
+    <rect x="305" y="310" width="45" height="40" rx="3" />
+    <rect x="365" y="310" width="45" height="40" rx="3" />
+    <rect x="425" y="310" width="45" height="40" rx="3" />
+    <rect x="250" y="370" width="45" height="40" rx="3" />
+    <rect x="305" y="370" width="45" height="40" rx="3" />
+    <rect x="365" y="370" width="45" height="40" rx="3" />
+    <rect x="425" y="370" width="45" height="40" rx="3" />
+  </g>
+
+  <!-- Right Building -->
+  <rect x="480" y="220" width="200" height="260" rx="4" fill="url(#buildingGrad)" opacity="0.9" />
+  <g fill="#ffffff">
+    <rect x="510" y="250" width="30" height="35" rx="2" />
+    <rect x="560" y="250" width="30" height="35" rx="2" />
+    <rect x="610" y="250" width="30" height="35" rx="2" />
+    <rect x="510" y="310" width="30" height="35" rx="2" />
+    <rect x="560" y="310" width="30" height="35" rx="2" />
+    <rect x="610" y="310" width="30" height="35" rx="2" />
+    <rect x="510" y="370" width="30" height="35" rx="2" />
+    <rect x="560" y="370" width="30" height="35" rx="2" />
+    <rect x="610" y="370" width="30" height="35" rx="2" />
+  </g>
+
+  <!-- Trees & Greenery -->
+  <circle cx="90" cy="460" r="45" fill="#15803d" />
+  <circle cx="120" cy="450" r="35" fill="#22c55e" />
+  <circle cx="680" cy="450" r="50" fill="#15803d" />
+  <circle cx="720" cy="460" r="40" fill="#22c55e" />
+
+  <!-- Ground / Campus Lawn -->
+  <path d="M0 460 C200 450, 600 450, 800 460 L800 600 L0 600 Z" fill="url(#grassGrad)" />
+  <path d="M120 480 C300 470, 500 470, 680 480 L760 600 L40 600 Z" fill="#e2e8f0" />
+  <!-- Clean Paver Walkway Lines -->
+  <line x1="300" y1="480" x2="220" y2="600" stroke="#cbd5e1" stroke-width="2" />
+  <line x1="500" y1="480" x2="580" y2="600" stroke="#cbd5e1" stroke-width="2" />
+
+  <!-- 3-Way Waste Segregation Station Card (Front & Center) -->
+  <g filter="url(#cardShadow)">
+    <rect x="180" y="440" width="440" height="135" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Top badge on card -->
+    <rect x="290" y="426" width="220" height="28" rx="14" fill="#0f172a" />
+    <text x="400" y="445" font-family="sans-serif" font-size="11" font-weight="700" fill="#22c55e" text-anchor="middle" letter-spacing="1">CAMPUS WASTE SEGREGATION</text>
+
+    <!-- Bin 1: WET / ORGANIC (Green) -->
+    <g transform="translate(210, 465)">
+      <rect x="0" y="10" width="55" height="55" rx="8" fill="#16a34a" />
+      <!-- Bin lid -->
+      <rect x="-4" y="5" width="63" height="8" rx="4" fill="#15803d" />
+      <path d="M22 25 C25 20 33 22 35 28 C37 34 30 40 27 42 C26 38 24 35 20 35 C17 35 15 30 18 27 Z" fill="#ffffff" />
+      <text x="27.5" y="75" font-family="sans-serif" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">WET WASTE</text>
+      <text x="27.5" y="86" font-family="sans-serif" font-size="8" font-weight="600" fill="#64748b" text-anchor="middle">Compostable</text>
+    </g>
+
+    <!-- Bin 2: DRY / RECYCLABLE (Blue) -->
+    <g transform="translate(372.5, 465)">
+      <rect x="0" y="10" width="55" height="55" rx="8" fill="#0284c7" />
+      <!-- Bin lid -->
+      <rect x="-4" y="5" width="63" height="8" rx="4" fill="#0369a1" />
+      <!-- Recycling 3-arrow mobius triangle -->
+      <path d="M27 24 L34 33 H20 Z M20 37 L24 45 L15 48 Z M35 37 L30 46 L40 48 Z" fill="#ffffff" />
+      <text x="27.5" y="75" font-family="sans-serif" font-size="10" font-weight="700" fill="#0369a1" text-anchor="middle">DRY WASTE</text>
+      <text x="27.5" y="86" font-family="sans-serif" font-size="8" font-weight="600" fill="#64748b" text-anchor="middle">Recyclable</text>
+    </g>
+
+    <!-- Bin 3: E-WASTE / HAZARDOUS (Red/Amber) -->
+    <g transform="translate(535, 465)">
+      <rect x="0" y="10" width="55" height="55" rx="8" fill="#ea580c" />
+      <!-- Bin lid -->
+      <rect x="-4" y="5" width="63" height="8" rx="4" fill="#c2410c" />
+      <!-- Chip / Plug / Battery icon -->
+      <rect x="18" y="26" width="19" height="24" rx="3" fill="#ffffff" />
+      <line x1="22" y1="21" x2="22" y2="26" stroke="#ffffff" stroke-width="2" />
+      <line x1="33" y1="21" x2="33" y2="26" stroke="#ffffff" stroke-width="2" />
+      <text x="27.5" y="75" font-family="sans-serif" font-size="10" font-weight="700" fill="#c2410c" text-anchor="middle">E-WASTE</text>
+      <text x="27.5" y="86" font-family="sans-serif" font-size="8" font-weight="600" fill="#64748b" text-anchor="middle">Electronics</text>
+    </g>
+  </g>
+
+  <!-- Clean Floating Feature Tags -->
+  <g transform="translate(60, 140)" filter="url(#cardShadow)">
+    <rect width="180" height="48" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+    <circle cx="28" cy="24" r="14" fill="#dcfce7" />
+    <path d="M23 24 L27 28 L34 19" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    <text x="52" y="22" font-family="sans-serif" font-size="12" font-weight="700" fill="#0f172a">Zero-Waste Goal</text>
+    <text x="52" y="36" font-family="sans-serif" font-size="9.5" font-weight="500" fill="#64748b">Campus Initiative</text>
+  </g>
+
+  <g transform="translate(560, 150)" filter="url(#cardShadow)">
+    <rect width="180" height="48" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+    <circle cx="28" cy="24" r="14" fill="#ffedd5" />
+    <polygon points="28,15 32,23 40,23 34,28 36,36 28,31 20,36 22,28 16,23 24,23" fill="#ea580c" />
+    <text x="52" y="22" font-family="sans-serif" font-size="12" font-weight="700" fill="#0f172a">5 Student Events</text>
+    <text x="52" y="36" font-family="sans-serif" font-size="9.5" font-weight="500" fill="#64748b">Trophy & Certs</text>
+  </g>
+
+</svg>

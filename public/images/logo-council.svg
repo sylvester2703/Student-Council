@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="councilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#15803d" />
+    </linearGradient>
+  </defs>
+  <!-- Circular Seal Outer Ring -->
+  <circle cx="100" cy="100" r="92" fill="#ffffff" stroke="#16a34a" stroke-width="4" />
+  <circle cx="100" cy="100" r="82" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5" stroke-dasharray="3 3" />
+  
+  <!-- Central Emblem: Student Leadership Hands / Leaf & Star -->
+  <circle cx="100" cy="92" r="32" fill="url(#councilGrad)" />
+  <!-- Graduation Cap / Leadership Laurel -->
+  <path d="M100 74 L124 85 L100 96 L76 85 Z" fill="#ffffff" />
+  <path d="M124 85 V95" stroke="#facc15" stroke-width="2" />
+  <circle cx="124" cy="96" r="2" fill="#facc15" />
+  <path d="M84 92 V102 C84 108 100 112 100 112 C100 112 116 108 116 102 V92" fill="#ffffff" opacity="0.9" />
+
+  <!-- Stars -->
+  <polygon points="65,92 67,97 72,97 68,100 70,105 65,102 60,105 62,100 58,97 63,97" fill="#f59e0b" />
+  <polygon points="135,92 137,97 142,97 138,100 140,105 135,102 130,105 132,100 128,97 133,97" fill="#f59e0b" />
+
+  <!-- Banner Text -->
+  <text x="100" y="142" font-family="sans-serif" font-size="10" font-weight="800" fill="#15803d" text-anchor="middle" letter-spacing="1">STUDENT COUNCIL</text>
+  <text x="100" y="156" font-family="sans-serif" font-size="7.5" font-weight="700" fill="#047857" text-anchor="middle" letter-spacing="0.5">LEADERSHIP • ACTION</text>
+  <text x="100" y="168" font-family="sans-serif" font-size="6.5" font-weight="600" fill="#64748b" text-anchor="middle">PES MCOE PUNE</text>
+</svg>
