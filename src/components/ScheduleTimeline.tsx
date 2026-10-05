@@ -40,10 +40,10 @@ export const ScheduleTimeline: React.FC = () => {
             <span>EVENT TIMELINE</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-heading">
-            Official Week Schedule
+            Flagship Event Schedule — 7th October 2026
           </h2>
           <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            Plan your week. All timings, live event slots, recon hours, and deadline milestones across the 5-day celebration.
+            Plan your event day. All session timings, competition rounds, judging milestones, and valedictory ceremony organized by the Student Council on Wednesday, 7th October 2026.
           </p>
         </div>
 

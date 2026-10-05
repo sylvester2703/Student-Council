@@ -57,16 +57,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenRegister, onO
 
               <div>
                 <span className="font-extrabold text-white text-base font-heading block">
-                  SWACHH BHARAT WEEK 2026
+                  PES MCOE STUDENT COUNCIL
                 </span>
                 <span className="text-[11px] text-emerald-400 font-semibold">
-                  PES Modern College of Engineering • Pune
+                  Official Student Body • PES Modern College of Engineering, Pune
                 </span>
               </div>
             </div>
 
             <p className="text-slate-400 leading-relaxed pr-4">
-              &ldquo;{EVENT_CONFIG.event.tagline}&rdquo; An inter-collegiate campus initiative organized by the Student Council to foster civic responsibility and environmental stewardship. Max 30 entries accepted per activity.
+              Representing 6,000+ engineering students across 10+ departments. The Student Council organizes campus drives, technical summits, and flagship initiatives including <strong className="text-white">Swachh Bharat Week on 7th October 2026</strong>. Max 30 entries per competition.
             </p>
 
             <div className="pt-2 text-[11px] text-slate-400 space-y-1">
@@ -82,28 +82,28 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenRegister, onO
           {/* Col 3: Quick Navigation */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white font-heading">
-              Quick Navigation
+              Council Navigation
             </h4>
             <ul className="space-y-2">
               <li>
                 <a href="#home" className="hover:text-emerald-400 transition-colors">
-                  Home (Top)
-                </a>
-              </li>
-              <li>
-                <a href="#events" className="hover:text-emerald-400 transition-colors">
-                  5 Activities
-                </a>
-              </li>
-              <li>
-                <a href="#waste-hunt-zones" className="hover:text-emerald-400 transition-colors">
-                  Waste Hunt Zones A–E
+                  Home (Council)
                 </a>
               </li>
               <li>
                 <a href="#council-members" className="hover:text-emerald-400 transition-colors flex items-center gap-1">
                   <Users className="w-3 h-3 text-emerald-400" />
                   <span>Council Members</span>
+                </a>
+              </li>
+              <li>
+                <a href="#about-council" className="hover:text-emerald-400 transition-colors">
+                  About Council &amp; Pillars
+                </a>
+              </li>
+              <li>
+                <a href="#events" className="hover:text-emerald-400 transition-colors">
+                  7th Oct Competitions
                 </a>
               </li>
               <li>
@@ -114,16 +114,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenRegister, onO
               </li>
               <li>
                 <a href="#schedule" className="hover:text-emerald-400 transition-colors">
-                  Event Schedule
+                  Event Schedule (Oct 7)
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: The 5 Activities */}
+          {/* Col 4: Active Competitions */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white font-heading">
-              Activities (Max 30)
+              Oct 7 Competitions (Max 30)
             </h4>
             <ul className="space-y-2 text-slate-400">
               {EVENT_CONFIG.events.map((ev) => (
