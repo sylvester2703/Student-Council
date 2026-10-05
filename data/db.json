@@ -330,6 +330,29 @@
       "registeredAt": "2026-10-05T06:23:11.504Z",
       "status": "CONFIRMED",
       "emailReceiptSent": true
+    },
+    {
+      "eventId": "poster-making",
+      "eventTitle": "Poster Making",
+      "teamName": "Test Squad",
+      "leaderName": "Test Student",
+      "leaderEmail": "test@moderncoe.edu.in",
+      "leaderPhone": "9999999999",
+      "branch": "Computer Engineering",
+      "year": "Third Year (TE)",
+      "division": "Div A",
+      "members": [
+        {
+          "name": "Test Student",
+          "isLeader": true
+        }
+      ],
+      "consentGiven": true,
+      "id": "SBW-2026-010",
+      "registrationNumber": 10,
+      "registeredAt": "2026-10-05T06:37:47.020Z",
+      "status": "CONFIRMED",
+      "emailReceiptSent": true
     }
   ],
   "submissions": [

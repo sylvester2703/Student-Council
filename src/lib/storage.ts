@@ -474,6 +474,33 @@ export async function updateSubmissionStatus(
   return sub;
 }
 
+export async function deleteRegistration(id: string): Promise<boolean> {
+  const db = ensureDb();
+  const searchId = id.trim().toUpperCase();
+  const initialLength = db.registrations.length;
+  db.registrations = db.registrations.filter((r) => r.id.toUpperCase() !== searchId);
+  // Also clean up any associated submission
+  db.submissions = db.submissions.filter((s) => s.registrationId.toUpperCase() !== searchId);
+  writeDb(db);
+  return db.registrations.length < initialLength;
+}
+
+export async function deleteSubmission(submissionId: string): Promise<boolean> {
+  const db = ensureDb();
+  const searchId = submissionId.trim().toUpperCase();
+  const initialLength = db.submissions.length;
+  const sub = db.submissions.find((s) => s.submissionId.toUpperCase() === searchId);
+  if (sub) {
+    const reg = db.registrations.find((r) => r.id.toUpperCase() === sub.registrationId.toUpperCase());
+    if (reg && reg.status === "SUBMITTED") {
+      reg.status = "CONFIRMED";
+    }
+  }
+  db.submissions = db.submissions.filter((s) => s.submissionId.toUpperCase() !== searchId);
+  writeDb(db);
+  return db.submissions.length < initialLength;
+}
+
 export async function castVote(submissionId: string, voterName: string, voterEmail: string, ipHash?: string): Promise<{ success: boolean; message: string; votesCount?: number }> {
   const db = ensureDb();
   const cleanEmail = voterEmail.trim().toLowerCase();

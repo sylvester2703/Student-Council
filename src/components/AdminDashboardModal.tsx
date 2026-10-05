@@ -14,6 +14,10 @@ import {
   Users,
   Award,
   Calendar,
+  Trash2,
+  CheckCircle2,
+  Copy,
+  Check,
 } from "lucide-react";
 import { EVENT_CONFIG } from "@/config/eventConfig";
 import { RegistrationRecord, SubmissionRecord } from "@/lib/types";
@@ -24,7 +28,7 @@ interface AdminDashboardModalProps {
 }
 
 export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen, onClose }) => {
-  const [pinInput, setPinInput] = useState("");
+  const [pinInput, setPinInput] = useState("MCOE@2026");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,7 +39,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   const [submissions, setSubmissions] = useState<SubmissionRecord[]>([]);
 
   // Search & Filters
-  const [activeTab, setActiveTab] = useState<"SUBMISSIONS" | "REGISTRATIONS">("SUBMISSIONS");
+  const [activeTab, setActiveTab] = useState<"REGISTRATIONS" | "SUBMISSIONS">("REGISTRATIONS");
   const [filterEvent, setFilterEvent] = useState<string>("ALL");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,6 +53,8 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   const [editShortlist, setEditShortlist] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [updateMsg, setUpdateMsg] = useState("");
+  const [actionSuccessMsg, setActionSuccessMsg] = useState("");
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +84,86 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     } catch {
       setAuthError("Failed to connect to organizer backend.");
       setLoading(false);
+    }
+  };
+
+  const handleDeleteRegistration = async (regId: string, teamName: string) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete Registration ${regId} (${teamName})?\n\nThis will remove the squad from the system and immediately free up 1 slot for this competition.`
+    );
+    if (!confirmDelete) return;
+
+    setIsDeletingId(regId);
+    setActionSuccessMsg("");
+
+    try {
+      const res = await fetch(`/api/admin?pin=${encodeURIComponent(pinInput)}&registrationId=${encodeURIComponent(regId)}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: pinInput, registrationId: regId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to delete registration.");
+        setIsDeletingId(null);
+        return;
+      }
+
+      setRegistrations(data.registrations);
+      setSubmissions(data.submissions);
+      setStats(data.stats);
+      if (inspectingReg?.id === regId) {
+        setInspectingReg(null);
+      }
+      setActionSuccessMsg(`Registration ${regId} deleted successfully. Competition slot freed!`);
+      setIsDeletingId(null);
+
+      setTimeout(() => {
+        setActionSuccessMsg("");
+      }, 4000);
+    } catch {
+      alert("Error connecting to server to delete registration.");
+      setIsDeletingId(null);
+    }
+  };
+
+  const handleDeleteSubmission = async (subId: string, teamName: string) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete Submission ${subId} (${teamName})?`
+    );
+    if (!confirmDelete) return;
+
+    setActionSuccessMsg("");
+
+    try {
+      const res = await fetch(`/api/admin?pin=${encodeURIComponent(pinInput)}&submissionId=${encodeURIComponent(subId)}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: pinInput, submissionId: subId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to delete submission.");
+        return;
+      }
+
+      setRegistrations(data.registrations);
+      setSubmissions(data.submissions);
+      setStats(data.stats);
+      if (inspectingSub?.submissionId === subId) {
+        setInspectingSub(null);
+      }
+      setActionSuccessMsg(`Submission ${subId} deleted successfully.`);
+
+      setTimeout(() => {
+        setActionSuccessMsg("");
+      }, 4000);
+    } catch {
+      alert("Error connecting to server to delete submission.");
     }
   };
 
@@ -273,7 +359,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
               <div>
                 <h3 className="text-xl font-bold text-slate-900 font-heading">Organizer Verification</h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  Enter Student Council Admin PIN to access the participant master roster, submissions, judging, and Google Sheet exports.
+                  Enter Student Council Admin PIN to access the participant master roster, manage/delete entries, view submissions, and sync Google Sheets.
                 </p>
               </div>
 
@@ -304,9 +390,16 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
           ) : (
             /* AUTHENTICATED DASHBOARD */
             <div className="space-y-6">
+              {actionSuccessMsg && (
+                <div className="bg-emerald-100 border border-emerald-300 text-emerald-900 text-xs font-bold p-3.5 rounded-xl flex items-center gap-2 animate-in fade-in">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                  <span>{actionSuccessMsg}</span>
+                </div>
+              )}
+
               {/* Summary Stats Grid */}
               {stats && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
                   <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 text-center">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">
                       Total Registered
@@ -321,10 +414,10 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                     <span className="text-2xl font-black text-orange-900 font-heading">{stats.totalSubmissions}</span>
                   </div>
 
-                  {stats.eventStats.map((es: any) => (
+                  {stats.eventStats?.map((es: any) => (
                     <div key={es.eventId} className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-center">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate" title={es.title}>
-                        {es.title.split(" ")[0]}
+                        {es.title}
                       </span>
                       <span className="text-lg font-black text-slate-900 font-heading">
                         {es.registrations} <span className="text-xs font-normal text-slate-400">/ 30 max</span>
@@ -364,9 +457,9 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                   <select
                     value={filterEvent}
                     onChange={(e) => setFilterEvent(e.target.value)}
-                    className="text-xs p-2 bg-slate-50 border border-slate-300 rounded-xl outline-hidden"
+                    className="text-xs p-2 bg-slate-50 border border-slate-300 rounded-xl outline-hidden font-medium"
                   >
-                    <option value="ALL">All Events</option>
+                    <option value="ALL">All Competitions</option>
                     {EVENT_CONFIG.events.map((ev) => (
                       <option key={ev.id} value={ev.id}>
                         {ev.title}
@@ -392,7 +485,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                       className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 px-3 py-2 rounded-xl transition-colors cursor-pointer shadow-2xs"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>Download Roster CSV</span>
+                      <span>Download Sheet CSV</span>
                     </button>
                   ) : (
                     <button
@@ -411,7 +504,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Type any Registration ID (e.g. SBW-2026-001), Student Name, Phone, or Branch to identify who is who..."
+                  placeholder="Type any Registration ID (e.g. SBW-2026-001), Student Name, Phone, or Department to search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs outline-hidden focus:ring-2 focus:ring-emerald-500"
@@ -430,9 +523,9 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                         <th className="p-3">Leader Name</th>
                         <th className="p-3">Contact (Phone & Email)</th>
                         <th className="p-3">Department & Year</th>
-                        <th className="p-3">Squad Members</th>
+                        <th className="p-3">Squad</th>
                         <th className="p-3">Status</th>
-                        <th className="p-3 text-right">Inspect</th>
+                        <th className="p-3 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -481,13 +574,28 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                               </span>
                             </td>
                             <td className="p-3 text-right">
-                              <button
-                                onClick={() => setInspectingReg(reg)}
-                                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>View Squad</span>
-                              </button>
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => setInspectingReg(reg)}
+                                  className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                                  title="View complete squad details"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                  <span>View</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  disabled={isDeletingId === reg.id}
+                                  onClick={() => handleDeleteRegistration(reg.id, reg.teamName)}
+                                  className="inline-flex items-center gap-1 text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-1 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                                  title="Delete registration and free up slot"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                                  <span>Delete</span>
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -556,13 +664,24 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                               {sub.googleDrivePath}
                             </td>
                             <td className="p-3 text-right">
-                              <button
-                                onClick={() => handleOpenInspect(sub)}
-                                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                                <span>Inspect</span>
-                              </button>
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenInspect(sub)}
+                                  className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                  <span>Inspect</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteSubmission(sub.submissionId, sub.teamName)}
+                                  className="inline-flex items-center gap-1 text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                                  title="Delete submission"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -647,7 +766,17 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-2">
+                {/* Actions bottom bar */}
+                <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteRegistration(inspectingReg.id, inspectingReg.teamName)}
+                    className="px-4 py-2 text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-xl cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                    <span>Delete Registration Entry</span>
+                  </button>
+
                   <button
                     onClick={() => setInspectingReg(null)}
                     className="px-5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl cursor-pointer"
@@ -656,6 +785,118 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* INSPECT SUBMISSION EVALUATION POPUP */}
+        {inspectingSub && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-6 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-4">
+              <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
+                <div>
+                  <span className="font-mono text-xs font-bold text-emerald-400 bg-slate-800 px-2 py-0.5 rounded">
+                    {inspectingSub.submissionId}
+                  </span>
+                  <h3 className="text-xl font-bold font-heading mt-1">
+                    {inspectingSub.submissionTitle}
+                  </h3>
+                  <p className="text-xs text-slate-400">Team: {inspectingSub.teamName}</p>
+                </div>
+                <button
+                  onClick={() => setInspectingSub(null)}
+                  className="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-lg cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveEvaluation} className="p-6 max-h-[70vh] overflow-y-auto space-y-4 text-xs text-slate-700">
+                {updateMsg && (
+                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold">
+                    {updateMsg}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase text-slate-600 mb-1">
+                      Evaluation Status
+                    </label>
+                    <select
+                      value={editStatus}
+                      onChange={(e) => setEditStatus(e.target.value as SubmissionRecord["status"])}
+                      className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold"
+                    >
+                      <option value="SUBMITTED">SUBMITTED</option>
+                      <option value="UNDER REVIEW">UNDER REVIEW</option>
+                      <option value="SHORTLISTED">SHORTLISTED</option>
+                      <option value="WINNER">WINNER</option>
+                      <option value="REJECTED">REJECTED</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase text-slate-600 mb-1">
+                      Judging Score (0-100)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={editScore}
+                      onChange={(e) => setEditScore(e.target.value)}
+                      placeholder="e.g. 95"
+                      className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-slate-600 mb-1">
+                    Jury Feedback / Comments
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={editComments}
+                    onChange={(e) => setEditComments(e.target.value)}
+                    placeholder="Enter judging feedback..."
+                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="shortlistCheck"
+                    checked={editShortlist}
+                    onChange={(e) => setEditShortlist(e.target.checked)}
+                    className="w-4 h-4 text-emerald-600 rounded cursor-pointer"
+                  />
+                  <label htmlFor="shortlistCheck" className="text-xs font-bold text-slate-800 cursor-pointer">
+                    Shortlist for Campus Public Voting
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteSubmission(inspectingSub.submissionId, inspectingSub.teamName)}
+                    className="px-4 py-2 text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-xl cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                    <span>Delete Submission</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={updating}
+                    className="px-6 py-2 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl shadow-xs cursor-pointer"
+                  >
+                    {updating ? "Saving..." : "Save Evaluation"}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

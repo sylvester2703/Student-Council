@@ -54,20 +54,20 @@ export default function HomePage() {
 
       {/* Main Content Sections */}
       <main className="flex-1">
-        {/* 1. Hero Section */}
+        {/* 1. Hero Section (Home) */}
         <HeroSection
           onOpenRegister={handleOpenRegister}
           onOpenSubmit={handleOpenSubmit}
         />
 
-        {/* 2. Five Event Activities (Limit 30 entries each) */}
+        {/* 2. Student Council Members & Leadership Section (Scroll directly down to see members) */}
+        <CouncilMembersSection />
+
+        {/* 3. Three Student Competitions / Activities (Limit 30 entries each) */}
         <EventCardsSection
           onOpenRegister={handleOpenRegister}
           onOpenSubmit={handleOpenSubmit}
         />
-
-        {/* 3. Student Council Members & Leadership Section */}
-        <CouncilMembersSection />
 
         {/* 4. Waste Hunt Permitted Campus Zones A–E */}
         <WasteHuntZoneSystem
