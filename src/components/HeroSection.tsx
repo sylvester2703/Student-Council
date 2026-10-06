@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Calendar,
   Lock,
@@ -47,8 +48,29 @@ export default function HeroSection({
       <div className="absolute top-1/2 -right-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Institutional Pill Badge */}
-        <div className="flex justify-center mb-6">
+        {/* Institutional Pill Badge with Official Crests */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+          <div className="flex items-center gap-2">
+            <div className="w-11 h-11 rounded-2xl bg-white p-1 shadow-lg border border-red-800/40 flex items-center justify-center">
+              <Image
+                src="/logos/pes-mcoe-college-logo.png"
+                alt="PES MCOE Crest"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+            </div>
+            <div className="w-11 h-11 rounded-2xl bg-white p-1 shadow-lg border border-emerald-800/40 flex items-center justify-center">
+              <Image
+                src="/logos/students-council-logo.png"
+                alt="Students Council Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+            </div>
+          </div>
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-amber-500/30 text-slate-200 text-xs font-semibold shadow-lg backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
             <span className="text-amber-300 font-bold uppercase tracking-wider text-[11px]">

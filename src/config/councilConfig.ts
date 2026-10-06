@@ -7,6 +7,7 @@ export const COUNCIL_CONFIG = {
     affiliation: "Affiliated to Savitribai Phule Pune University (SPPU) | Approved by AICTE & NAAC 'A+' Accredited",
     establishedYear: "1999",
     mapUrl: "https://maps.google.com/?q=PES+Modern+College+of+Engineering+Pune",
+    logoUrl: "/logos/pes-mcoe-college-logo.png",
   },
   council: {
     name: "Students’ Council",
@@ -16,16 +17,17 @@ export const COUNCIL_CONFIG = {
     motto: "Excellence through Governance, Innovation & Inclusivity",
     email: "studentscouncil@moderncoe.edu.in",
     contactPhones: ["+91 20 2553 3638", "+91 98220 12345"],
+    logoUrl: "/logos/students-council-logo.png",
   },
   socials: {
     instagram: {
-      handle: "@pesmcoe_studentscouncil",
-      url: "https://instagram.com/pesmcoe_studentscouncil",
+      handle: "@pesmoderncoe_pune",
+      url: "https://www.instagram.com/pesmoderncoe_pune?stkn=MWFmcjNyMXZyaDh6bQ==",
       title: "Follow on Instagram",
     },
     whatsappChannel: {
       title: "Join WhatsApp Channel",
-      url: "https://whatsapp.com/channel/pesmcoe_council",
+      url: "https://whatsapp.com/channel/0029Vb7CCvG3rZZcpzCcZY3I",
       subtitle: "Instant circulars, fest alerts & emergency notices",
     },
     linkedin: {

@@ -4,9 +4,9 @@ export const INITIAL_DB_DATA: DatabaseSchema = {
   siteSettings: {
     id: "mcoe-settings-2026",
     academicTenure: "2026–2027",
-    instagramUrl: "https://instagram.com/pesmcoe_studentscouncil",
-    instagramHandle: "@pesmcoe_studentscouncil",
-    whatsappChannelUrl: "https://whatsapp.com/channel/pesmcoe_council",
+    instagramUrl: "https://www.instagram.com/pesmoderncoe_pune?stkn=MWFmcjNyMXZyaDh6bQ==",
+    instagramHandle: "@pesmoderncoe_pune",
+    whatsappChannelUrl: "https://whatsapp.com/channel/0029Vb7CCvG3rZZcpzCcZY3I",
     officialEmail: "studentscouncil@moderncoe.edu.in",
     contactPhone1: "+91 20 2553 3638",
     contactPhone2: "+91 98220 12345",

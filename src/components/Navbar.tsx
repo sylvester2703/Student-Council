@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Shield,
@@ -128,10 +129,29 @@ export default function Navbar({ settings }: NavbarProps) {
             href="/"
             className="flex items-center gap-3 group focus:outline-none"
           >
-            {/* Crest Emblem / Monogram */}
-            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-red-800 via-red-900 to-slate-950 flex items-center justify-center text-white shadow-md shadow-red-900/20 group-hover:scale-105 transition-transform border border-amber-500/40">
-              <div className="absolute inset-0 rounded-xl bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-400/20 via-transparent to-transparent" />
-              <Shield className="w-6 h-6 text-amber-400 stroke-[2.2]" />
+            {/* College & Council Dual Logo Crest */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white p-0.5 border border-red-900/30 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/logos/pes-mcoe-college-logo.png"
+                  alt="PES MCOE College Crest"
+                  width={48}
+                  height={48}
+                  className="object-contain w-full h-full"
+                  priority
+                />
+              </div>
+
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white p-0.5 border border-emerald-800/30 shadow-md group-hover:scale-105 transition-transform flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/logos/students-council-logo.png"
+                  alt="PES MCOE Students Council Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain w-full h-full"
+                  priority
+                />
+              </div>
             </div>
 
             <div className="flex flex-col">
@@ -242,8 +262,25 @@ export default function Navbar({ settings }: NavbarProps) {
               {/* Drawer Header */}
               <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-lg bg-red-800 flex items-center justify-center text-white border border-amber-400">
-                    <Shield className="w-5 h-5 text-amber-400" />
+                  <div className="flex items-center gap-1">
+                    <div className="w-9 h-9 rounded-lg bg-white p-0.5 flex items-center justify-center overflow-hidden border border-amber-400">
+                      <Image
+                        src="/logos/pes-mcoe-college-logo.png"
+                        alt="PES MCOE Logo"
+                        width={36}
+                        height={36}
+                        className="object-contain"
+                      />
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-white p-0.5 flex items-center justify-center overflow-hidden border border-amber-400">
+                      <Image
+                        src="/logos/students-council-logo.png"
+                        alt="Students Council Logo"
+                        width={36}
+                        height={36}
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
                   <div>
                     <h3 className="font-bold text-sm tracking-tight text-white font-heading">

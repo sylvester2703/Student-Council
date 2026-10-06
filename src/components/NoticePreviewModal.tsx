@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   X,
   FileText,
@@ -67,6 +68,26 @@ export default function NoticePreviewModal({
         <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-slate-800 bg-white">
           {/* Institutional Letterhead Header */}
           <div className="text-center border-b-2 border-red-900 pb-4 space-y-1">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <div className="w-12 h-12 rounded-lg bg-white p-0.5 border border-red-900/30 flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/logos/pes-mcoe-college-logo.png"
+                  alt="PES MCOE Crest"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
+              </div>
+              <div className="w-12 h-12 rounded-lg bg-white p-0.5 border border-emerald-800/30 flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/logos/students-council-logo.png"
+                  alt="Students Council Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
+              </div>
+            </div>
             <p className="text-[11px] font-bold text-red-800 uppercase tracking-widest">
               Progressive Education Society’s
             </p>

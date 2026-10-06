@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Shield,
   MapPin,
@@ -35,9 +36,27 @@ export default function Footer({ settings }: FooterProps) {
           {/* Institutional Branding Block (Col 1-4) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-red-800 via-red-900 to-slate-950 flex items-center justify-center text-white border border-amber-400/40 shadow-lg shadow-red-950">
-                <Shield className="w-6 h-6 text-amber-400" />
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="w-11 h-11 rounded-xl bg-white p-1 flex items-center justify-center border border-red-800/40 shadow-md overflow-hidden">
+                  <Image
+                    src="/logos/pes-mcoe-college-logo.png"
+                    alt="PES MCOE Crest"
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                  />
+                </div>
+                <div className="w-11 h-11 rounded-xl bg-white p-1 flex items-center justify-center border border-emerald-800/40 shadow-md overflow-hidden">
+                  <Image
+                    src="/logos/students-council-logo.png"
+                    alt="Students Council Logo"
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                  />
+                </div>
               </div>
+
               <div>
                 <h3 className="font-extrabold text-base text-white tracking-tight font-heading">
                   STUDENTS’ COUNCIL

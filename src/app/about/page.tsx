@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MobileQuickBar from "@/components/MobileQuickBar";
@@ -38,6 +39,27 @@ export default async function AboutPage() {
         {/* HERO BANNER */}
         <div className="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white py-14 lg:py-20 px-4 border-b border-slate-800 text-center relative overflow-hidden">
           <div className="max-w-4xl mx-auto space-y-4 relative z-10">
+            <div className="flex items-center justify-center gap-2.5 mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-white p-1 shadow-lg border border-red-800/40 flex items-center justify-center">
+                <Image
+                  src="/logos/pes-mcoe-college-logo.png"
+                  alt="PES MCOE Crest"
+                  width={44}
+                  height={44}
+                  className="object-contain"
+                />
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-white p-1 shadow-lg border border-emerald-800/40 flex items-center justify-center">
+                <Image
+                  src="/logos/students-council-logo.png"
+                  alt="Students Council Logo"
+                  width={44}
+                  height={44}
+                  className="object-contain"
+                />
+              </div>
+            </div>
+
             <span className="text-xs font-bold uppercase tracking-wider text-amber-300 bg-amber-500/20 px-3.5 py-1 rounded-full border border-amber-400/30">
               Institutional Heritage &amp; Governance
             </span>
