@@ -54,7 +54,7 @@ async function runTests() {
     assert(settingsRes.status === 200, 'Settings API responds with 200');
     const settings = settingsRes.data.data;
     assert(settings?.whatsappChannelUrl?.includes('whatsapp'), `WhatsApp Channel URL present: ${settings?.whatsappChannelUrl}`);
-    assert(settings?.instagramHandle === '@pesmcoe_studentscouncil', `Instagram Handle present: ${settings?.instagramHandle}`);
+    assert(settings?.instagramHandle === '@pesmoderncoe_pune', `Instagram Handle present: ${settings?.instagramHandle}`);
 
     // 2. Check Events API
     console.log('\n--- 2. Testing Events API ---');
