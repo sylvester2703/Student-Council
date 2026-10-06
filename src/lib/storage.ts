@@ -1,584 +1,537 @@
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
-import { RegistrationRecord, SubmissionRecord, VoteRecord } from "./types";
-import { EVENT_CONFIG, EventWinner } from "@/config/eventConfig";
+import {
+  DatabaseSchema,
+  SiteSettings,
+  AnonymousQuery,
+  CouncilEvent,
+  CouncilMember,
+  Club,
+  Notice,
+  EventRegistration,
+  StudentVoiceSubmission,
+  SponsorshipEnquiry,
+} from "./types";
+import { INITIAL_DB_DATA } from "@/config/initialDbData";
 
-export interface ResultsData {
-  isAnnounced: boolean;
-  announcementNotice: string;
-  eventWinners: EventWinner[];
-  lastUpdated?: string;
-}
+const DB_DIR = path.join(process.cwd(), "data");
+const DB_FILE = path.join(DB_DIR, "db.json");
 
-interface DbSchema {
-  registrations: RegistrationRecord[];
-  submissions: SubmissionRecord[];
-  votes: VoteRecord[];
-  results?: ResultsData;
-}
+let memoryCache: DatabaseSchema | null = null;
 
-const DB_FILE_PATH = path.join(process.cwd(), "data", "db.json");
-
-// In-memory fallback if file system is read-only
-let memoryDb: DbSchema | null = null;
-
-function getInitialDb(): DbSchema {
-  return {
-    registrations: [
-      {
-        id: "SBW-2026-001",
-        registrationNumber: 1,
-        eventId: "poster-making",
-        eventTitle: "Poster Making",
-        teamName: "EcoVisionaries",
-        leaderName: "Aarav Sharma",
-        leaderEmail: "aarav.sharma@moderncoe.edu.in",
-        leaderPhone: "9876543210",
-        branch: "Computer Engineering",
-        year: "Third Year (TE)",
-        division: "Div A",
-        members: [
-          {
-            name: "Aarav Sharma",
-            email: "aarav.sharma@moderncoe.edu.in",
-            phone: "9876543210",
-            branch: "Computer Engineering",
-            year: "Third Year (TE)",
-            division: "Div A",
-            isLeader: true,
-          },
-          {
-            name: "Pooja Kadam",
-            email: "pooja.kadam@moderncoe.edu.in",
-            phone: "9876543211",
-            branch: "Computer Engineering",
-            year: "Third Year (TE)",
-            division: "Div A",
-            isLeader: false,
-          },
-        ],
-        registeredAt: "2026-10-01T10:15:00.000Z",
-        status: "SUBMITTED",
-        consentGiven: true,
-      },
-      {
-        id: "SBW-2026-002",
-        registrationNumber: 2,
-        eventId: "reel-making",
-        eventTitle: "Reel Making",
-        teamName: "Lens of Change",
-        leaderName: "Riya Sawant",
-        leaderEmail: "riya.sawant@moderncoe.edu.in",
-        leaderPhone: "9876543212",
-        branch: "Electronics & Telecommunication (E&TC)",
-        year: "Final Year (BE)",
-        division: "Div B",
-        members: [
-          {
-            name: "Riya Sawant",
-            email: "riya.sawant@moderncoe.edu.in",
-            phone: "9876543212",
-            branch: "Electronics & Telecommunication (E&TC)",
-            year: "Final Year (BE)",
-            division: "Div B",
-            isLeader: true,
-          },
-          {
-            name: "Nikhil Joshi",
-            email: "nikhil.joshi@moderncoe.edu.in",
-            phone: "9876543213",
-            branch: "Mechanical Engineering",
-            year: "Third Year (TE)",
-            division: "Div A",
-            isLeader: false,
-          },
-        ],
-        registeredAt: "2026-10-01T11:20:00.000Z",
-        status: "SUBMITTED",
-        consentGiven: true,
-      },
-      {
-        id: "SBW-2026-003",
-        registrationNumber: 3,
-        eventId: "waste-hunt",
-        eventTitle: "Waste Hunt",
-        teamName: "EcoDetectives",
-        leaderName: "Kunal Shinde",
-        leaderEmail: "kunal.shinde@moderncoe.edu.in",
-        leaderPhone: "9876543214",
-        branch: "Mechanical Engineering",
-        year: "Final Year (BE)",
-        division: "Div A",
-        members: [
-          {
-            name: "Kunal Shinde",
-            email: "kunal.shinde@moderncoe.edu.in",
-            phone: "9876543214",
-            branch: "Mechanical Engineering",
-            year: "Final Year (BE)",
-            division: "Div A",
-            isLeader: true,
-          },
-          {
-            name: "Neha Verma",
-            email: "neha.verma@moderncoe.edu.in",
-            phone: "9876543215",
-            branch: "Electrical Engineering",
-            year: "Third Year (TE)",
-            division: "Div B",
-            isLeader: false,
-          },
-          {
-            name: "Omkar Patil",
-            email: "omkar.patil@moderncoe.edu.in",
-            phone: "9876543216",
-            branch: "Information Technology",
-            year: "Third Year (TE)",
-            division: "Div A",
-            isLeader: false,
-          },
-        ],
-        registeredAt: "2026-10-01T14:45:00.000Z",
-        status: "SUBMITTED",
-        consentGiven: true,
-      },
-    ],
-    submissions: [
-      {
-        submissionId: "SUB-2026-001",
-        registrationId: "SBW-2026-001",
-        eventId: "poster-making",
-        eventTitle: "Poster Making",
-        teamName: "EcoVisionaries",
-        leaderName: "Aarav Sharma",
-        leaderEmail: "aarav.sharma@moderncoe.edu.in",
-        leaderPhone: "9876543210",
-        branch: "Computer Engineering",
-        year: "Third Year (TE)",
-        division: "Div A",
-        submissionTitle: "Campus Segregation at Source & Future Micro-Hubs",
-        conceptNote: "A visual infographic mapping out a smart 3-bin recycling system for Modern College academic corridors.",
-        googleDrivePath: "SWACHH BHARAT WEEK 2026/01_POSTER_MAKING/SBW-2026-001_ECOVISIONARIES",
-        submittedAt: "2026-10-03T14:30:00.000Z",
-        updatedAt: "2026-10-03T14:30:00.000Z",
-        revision: 1,
-        status: "SHORTLISTED",
-        judgingScore: 94,
-        juryComments: "Outstanding visual clarity, accurate institutional context.",
-        isShortlistedForPeoplesChoice: true,
-        peoplesChoiceVotes: 142,
-      },
-      {
-        submissionId: "SUB-2026-002",
-        registrationId: "SBW-2026-002",
-        eventId: "reel-making",
-        eventTitle: "Reel Making",
-        teamName: "Lens of Change",
-        leaderName: "Riya Sawant",
-        leaderEmail: "riya.sawant@moderncoe.edu.in",
-        leaderPhone: "9876543212",
-        branch: "Electronics & Telecommunication (E&TC)",
-        year: "Final Year (BE)",
-        division: "Div B",
-        submissionTitle: "From Single-Use Cup to Recycled Planter (60s Journey)",
-        conceptNote: "Fast-paced vertical reel showing how canteen single-use plastic can be repurposed into botanical plant nurseries.",
-        googleDrivePath: "SWACHH BHARAT WEEK 2026/02_REEL_MAKING/SBW-2026-002_LENSOFCHANGE",
-        videoDurationSeconds: 58,
-        submittedAt: "2026-10-03T16:15:00.000Z",
-        updatedAt: "2026-10-03T16:15:00.000Z",
-        revision: 1,
-        status: "SHORTLISTED",
-        judgingScore: 96,
-        juryComments: "Inspiring narrative, sharp vertical framing, clear audio message.",
-        isShortlistedForPeoplesChoice: true,
-        peoplesChoiceVotes: 218,
-      },
-      {
-        submissionId: "SUB-2026-003",
-        registrationId: "SBW-2026-003",
-        eventId: "waste-hunt",
-        eventTitle: "Waste Hunt",
-        teamName: "EcoDetectives",
-        leaderName: "Kunal Shinde",
-        leaderEmail: "kunal.shinde@moderncoe.edu.in",
-        leaderPhone: "9876543214",
-        branch: "Mechanical Engineering",
-        year: "Final Year (BE)",
-        division: "Div A",
-        submissionTitle: "PES MCOE 5-Zone Cleanliness & Waste Audit Dossier",
-        conceptNote: "A comprehensive investigation of 5 permitted campus zones identifying recurring litter bottlenecks.",
-        googleDrivePath: "SWACHH BHARAT WEEK 2026/03_WASTE_HUNT/SBW-2026-003_ECODETECTIVES",
-        wasteHuntFindings: [
-          {
-            findingNumber: 1,
-            title: "Canteen Plaza Overflowing Paper Cups",
-            zone: "ZONE B: Canteen & Food Court",
-            specificLocation: "Corner beverage counter waste station (Zone B)",
-            problemDescription: "High volume of beverage paper cups discarded outside bins due to small bin aperture.",
-            identifiedCause: "Narrow flap lid restricts cup disposal during rush hour between 1:00 PM and 1:45 PM.",
-            proposedSolution: "Install wide-aperture dedicated cylindrical cup stackers to compress volume by 70%.",
-          },
-          {
-            findingNumber: 2,
-            title: "Corridor Staircase Landing Leaf Litter",
-            zone: "ZONE A: Academic Building",
-            specificLocation: "Staircase 2, between 2nd & 3rd Floor (Zone A)",
-            problemDescription: "Windblown dried leaves and stray paper notices accumulating in stairwell recess.",
-            identifiedCause: "Lack of corner broom sweep schedule during afternoon lecture intervals.",
-            proposedSolution: "Implement scheduled sweep at 12:30 PM and add a slim corner recycling dustbin.",
-          },
-          {
-            findingNumber: 3,
-            title: "Stormwater Drain Grate Blockage",
-            zone: "ZONE D: Parking & Perimeters",
-            specificLocation: "Main two-wheeler parking exit drain (Zone D)",
-            problemDescription: "Plastic wrappers and gravel partially clogging stormwater drain grate.",
-            identifiedCause: "Absence of fine mesh filter above heavy steel grates.",
-            proposedSolution: "Retrofit removable stainless steel micro-mesh basket for 5-minute weekly cleaning.",
-          },
-          {
-            findingNumber: 4,
-            title: "Garden Pathway Sitting Area Litter",
-            zone: "ZONE C: Botanical Garden",
-            specificLocation: "North lawn perimeter bench cluster (Zone C)",
-            problemDescription: "Snack wrappers left under decorative concrete benches.",
-            identifiedCause: "Nearest dustbin is 35 meters away, leading to convenience littering.",
-            proposedSolution: "Place twin eco-friendly bamboo dustbins within 8 meters of bench clusters.",
-          },
-          {
-            findingNumber: 5,
-            title: "Amphitheatre Notice Board Paper Scrap",
-            zone: "ZONE E: Common Student Areas",
-            specificLocation: "Central Amphitheatre notice pillar (Zone E)",
-            problemDescription: "Adhesive tape residue and torn event notice paper remnants.",
-            identifiedCause: "Pasting notices on non-pinboard stone surfaces.",
-            proposedSolution: "Designate magnetic acrylic display boards and strictly prohibit adhesive tape.",
-          },
-        ],
-        submittedAt: "2026-10-03T17:40:00.000Z",
-        updatedAt: "2026-10-03T17:40:00.000Z",
-        revision: 1,
-        status: "SHORTLISTED",
-        judgingScore: 97,
-        juryComments: "Phenomenal root-cause analysis and actionable low-cost engineering designs.",
-        isShortlistedForPeoplesChoice: false,
-        peoplesChoiceVotes: 0,
-      },
-    ],
-    votes: [],
-    results: EVENT_CONFIG.initialResults,
-  };
-}
-
-function ensureDb(): DbSchema {
-  if (memoryDb) {
-    return memoryDb;
+export async function ensureDb(): Promise<DatabaseSchema> {
+  if (memoryCache) {
+    return memoryCache;
   }
 
   try {
-    const dir = path.dirname(DB_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
+    await fs.mkdir(DB_DIR, { recursive: true });
+    const content = await fs.readFile(DB_FILE, "utf-8");
+    const parsed = JSON.parse(content) as DatabaseSchema;
 
-    if (!fs.existsSync(DB_FILE_PATH)) {
-      const initial = getInitialDb();
-      fs.writeFileSync(DB_FILE_PATH, JSON.stringify(initial, null, 2), "utf-8");
-      memoryDb = initial;
-      return memoryDb;
-    }
+    // Merge with default schema structure in case new fields were added
+    const merged: DatabaseSchema = {
+      siteSettings: parsed.siteSettings || INITIAL_DB_DATA.siteSettings,
+      anonymousQueries: parsed.anonymousQueries || INITIAL_DB_DATA.anonymousQueries,
+      events: parsed.events || INITIAL_DB_DATA.events,
+      councilMembers: parsed.councilMembers || INITIAL_DB_DATA.councilMembers,
+      clubs: parsed.clubs || INITIAL_DB_DATA.clubs,
+      notices: parsed.notices || INITIAL_DB_DATA.notices,
+      eventRegistrations: parsed.eventRegistrations || INITIAL_DB_DATA.eventRegistrations,
+      studentVoiceSubmissions:
+        parsed.studentVoiceSubmissions || INITIAL_DB_DATA.studentVoiceSubmissions,
+      sponsorshipEnquiries:
+        parsed.sponsorshipEnquiries || INITIAL_DB_DATA.sponsorshipEnquiries,
+    };
 
-    const content = fs.readFileSync(DB_FILE_PATH, "utf-8");
-    memoryDb = JSON.parse(content);
-    if (!memoryDb!.results) {
-      memoryDb!.results = EVENT_CONFIG.initialResults;
-    }
-    return memoryDb as DbSchema;
-  } catch (err) {
-    console.warn("Storage warning, falling back to memory state:", err);
-    if (!memoryDb) {
-      memoryDb = getInitialDb();
-    }
-    return memoryDb;
+    memoryCache = merged;
+    return merged;
+  } catch {
+    // If file doesn't exist or is corrupt, initialize with default seed data
+    memoryCache = INITIAL_DB_DATA;
+    await fs.writeFile(DB_FILE, JSON.stringify(INITIAL_DB_DATA, null, 2), "utf-8");
+    return INITIAL_DB_DATA;
   }
 }
 
-function writeDb(db: DbSchema): void {
-  memoryDb = db;
+export async function saveDb(data: DatabaseSchema): Promise<void> {
+  memoryCache = data;
   try {
-    const dir = path.dirname(DB_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(db, null, 2), "utf-8");
-  } catch (err) {
-    console.warn("Could not write to local file system:", err);
+    await fs.mkdir(DB_DIR, { recursive: true });
+    await fs.writeFile(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch (error) {
+    console.error("Error writing to db.json:", error);
   }
 }
 
-export function generateGoogleDrivePath(eventId: string, registrationId: string, teamName: string): string {
-  const sanitizedTeam = teamName.replace(/[^a-zA-Z0-9_-]/g, "_").toUpperCase();
-  const eventFolderMap: Record<string, string> = {
-    "poster-making": "01_POSTER_MAKING",
-    "reel-making": "02_REEL_MAKING",
-    "waste-hunt": "03_WASTE_HUNT",
+// ---------------- SITE SETTINGS ----------------
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const db = await ensureDb();
+  return db.siteSettings;
+}
+
+export async function updateSiteSettings(
+  updates: Partial<SiteSettings>
+): Promise<SiteSettings> {
+  const db = await ensureDb();
+  db.siteSettings = {
+    ...db.siteSettings,
+    ...updates,
+    updatedAt: new Date().toISOString(),
   };
-  const categoryFolder = eventFolderMap[eventId] || "00_GENERAL";
-  return `SWACHH BHARAT WEEK 2026/${categoryFolder}/${registrationId}_${sanitizedTeam}`;
+  await saveDb(db);
+  return db.siteSettings;
 }
 
-export async function getAllRegistrations(): Promise<RegistrationRecord[]> {
-  const db = ensureDb();
-  return db.registrations;
-}
-
-export async function getRegistrationById(id: string): Promise<RegistrationRecord | null> {
-  const db = ensureDb();
-  const searchId = id.trim().toUpperCase();
-  return db.registrations.find((r) => r.id.toUpperCase() === searchId) || null;
-}
-
-export async function getRegistrationsCountByEvent(eventId: string): Promise<number> {
-  const db = ensureDb();
-  return db.registrations.filter((r) => r.eventId === eventId && r.status !== "CANCELLED").length;
-}
-
-export async function getEventSlotStats(): Promise<Record<string, { registered: number; max: number; available: number }>> {
-  const db = ensureDb();
-  const max = EVENT_CONFIG.event.entryLimitPerEvent || 30;
-  const stats: Record<string, { registered: number; max: number; available: number }> = {};
-
-  EVENT_CONFIG.events.forEach((ev) => {
-    const regCount = db.registrations.filter((r) => r.eventId === ev.id && r.status !== "CANCELLED").length;
-    stats[ev.id] = {
-      registered: regCount,
-      max,
-      available: Math.max(0, max - regCount),
-    };
-  });
-
-  return stats;
-}
-
-export async function createRegistration(
-  regData: Omit<RegistrationRecord, "id" | "registrationNumber" | "registeredAt" | "status">
-): Promise<RegistrationRecord> {
-  const db = ensureDb();
-  const currentCount = db.registrations.filter((r) => r.eventId === regData.eventId && r.status !== "CANCELLED").length;
-  const maxAllowed = EVENT_CONFIG.event.entryLimitPerEvent || 30;
-
-  if (currentCount >= maxAllowed) {
-    throw new Error(`Registrations for ${regData.eventTitle} are closed as the maximum capacity of ${maxAllowed} entries has been reached.`);
-  }
-
-  const nextNum = db.registrations.length + 1;
-  const idStr = String(nextNum).padStart(3, "0");
-  const id = `${EVENT_CONFIG.security.registrationIdPrefix}${idStr}`;
-
-  const newRecord: RegistrationRecord = {
-    ...regData,
-    id,
-    registrationNumber: nextNum,
-    registeredAt: new Date().toISOString(),
-    status: "CONFIRMED",
-    emailReceiptSent: true,
-  };
-
-  db.registrations.push(newRecord);
-  writeDb(db);
-  return newRecord;
-}
-
-export async function getAllSubmissions(): Promise<SubmissionRecord[]> {
-  const db = ensureDb();
-  return db.submissions;
-}
-
-export async function getSubmissionByRegistrationId(regId: string): Promise<SubmissionRecord | null> {
-  const db = ensureDb();
-  const searchId = regId.trim().toUpperCase();
-  return db.submissions.find((s) => s.registrationId.toUpperCase() === searchId) || null;
-}
-
-export async function saveSubmission(
-  subData: Omit<SubmissionRecord, "submissionId" | "submittedAt" | "updatedAt" | "revision" | "status" | "googleDrivePath">
-): Promise<{ submission: SubmissionRecord; isUpdate: boolean }> {
-  const db = ensureDb();
-  const existingIndex = db.submissions.findIndex(
-    (s) => s.registrationId.toUpperCase() === subData.registrationId.toUpperCase()
+// ---------------- ANONYMOUS QUERIES (ZERO-PII) ----------------
+export async function getAnonymousQueries(): Promise<AnonymousQuery[]> {
+  const db = await ensureDb();
+  return [...db.anonymousQueries].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
-
-  const googleDrivePath = generateGoogleDrivePath(subData.eventId, subData.registrationId, subData.teamName);
-
-  if (existingIndex >= 0) {
-    const existing = db.submissions[existingIndex];
-    const updated: SubmissionRecord = {
-      ...existing,
-      ...subData,
-      googleDrivePath,
-      updatedAt: new Date().toISOString(),
-      revision: existing.revision + 1,
-      status: existing.status === "REJECTED" ? "SUBMITTED" : existing.status,
-    };
-    db.submissions[existingIndex] = updated;
-    writeDb(db);
-    return { submission: updated, isUpdate: true };
-  } else {
-    const subNum = db.submissions.length + 1;
-    const submissionId = `SUB-2026-${String(subNum).padStart(3, "0")}`;
-    const now = new Date().toISOString();
-
-    const newSub: SubmissionRecord = {
-      ...subData,
-      submissionId,
-      googleDrivePath,
-      submittedAt: now,
-      updatedAt: now,
-      revision: 1,
-      status: "SUBMITTED",
-      peoplesChoiceVotes: 0,
-      isShortlistedForPeoplesChoice: false,
-      emailReceiptSent: true,
-    };
-
-    db.submissions.push(newSub);
-
-    const reg = db.registrations.find((r) => r.id.toUpperCase() === subData.registrationId.toUpperCase());
-    if (reg) {
-      reg.status = "SUBMITTED";
-    }
-
-    writeDb(db);
-    return { submission: newSub, isUpdate: false };
-  }
 }
 
-export async function updateSubmissionStatus(
-  submissionId: string,
-  status: SubmissionRecord["status"],
-  score?: number,
-  juryComments?: string,
-  isShortlisted?: boolean
-): Promise<SubmissionRecord | null> {
-  const db = ensureDb();
-  const sub = db.submissions.find((s) => s.submissionId === submissionId);
-  if (!sub) return null;
-
-  sub.status = status;
-  if (score !== undefined) sub.judgingScore = score;
-  if (juryComments !== undefined) sub.juryComments = juryComments;
-  if (isShortlisted !== undefined) sub.isShortlistedForPeoplesChoice = isShortlisted;
-  sub.updatedAt = new Date().toISOString();
-
-  writeDb(db);
-  return sub;
+export async function getPublicAnonymousQueries(): Promise<AnonymousQuery[]> {
+  const db = await ensureDb();
+  return db.anonymousQueries
+    .filter((q) => q.isPubliclyPublished && q.status === "RESOLVED")
+    .sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
 }
 
-export async function deleteRegistration(id: string): Promise<boolean> {
-  const db = ensureDb();
-  const searchId = id.trim().toUpperCase();
-  const initialLength = db.registrations.length;
-  db.registrations = db.registrations.filter((r) => r.id.toUpperCase() !== searchId);
-  // Also clean up any associated submission
-  db.submissions = db.submissions.filter((s) => s.registrationId.toUpperCase() !== searchId);
-  writeDb(db);
-  return db.registrations.length < initialLength;
-}
-
-export async function deleteSubmission(submissionId: string): Promise<boolean> {
-  const db = ensureDb();
-  const searchId = submissionId.trim().toUpperCase();
-  const initialLength = db.submissions.length;
-  const sub = db.submissions.find((s) => s.submissionId.toUpperCase() === searchId);
-  if (sub) {
-    const reg = db.registrations.find((r) => r.id.toUpperCase() === sub.registrationId.toUpperCase());
-    if (reg && reg.status === "SUBMITTED") {
-      reg.status = "CONFIRMED";
-    }
-  }
-  db.submissions = db.submissions.filter((s) => s.submissionId.toUpperCase() !== searchId);
-  writeDb(db);
-  return db.submissions.length < initialLength;
-}
-
-export async function castVote(submissionId: string, voterName: string, voterEmail: string, ipHash?: string): Promise<{ success: boolean; message: string; votesCount?: number }> {
-  const db = ensureDb();
-  const cleanEmail = voterEmail.trim().toLowerCase();
-
-  const sub = db.submissions.find((s) => s.submissionId === submissionId);
-  if (!sub) {
-    return { success: false, message: "Submission not found." };
-  }
-
-  const alreadyVoted = db.votes.find(
-    (v) => v.eventId === sub.eventId && v.voterEmail === cleanEmail
+export async function getAnonymousQueryByToken(
+  token: string
+): Promise<AnonymousQuery | null> {
+  const db = await ensureDb();
+  const normalizedToken = token.trim().toUpperCase();
+  const match = db.anonymousQueries.find(
+    (q) => q.trackingToken.toUpperCase() === normalizedToken
   );
+  return match || null;
+}
 
-  if (alreadyVoted) {
-    return {
-      success: false,
-      message: `You have already cast your vote for ${sub.eventTitle}. One vote per college email is permitted per event.`,
-    };
+function generateAnonymousToken(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
+  let randomCode = "";
+  for (let i = 0; i < 2; i++) {
+    randomCode += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return `ANON-MCOE-${randomNum}-${randomCode}`;
+}
+
+export async function createAnonymousQuery(input: {
+  category: string;
+  departmentScope?: string;
+  urgency: "LOW" | "MEDIUM" | "HIGH";
+  subject: string;
+  description: string;
+  allowPublicDisplay?: boolean;
+}): Promise<AnonymousQuery> {
+  const db = await ensureDb();
+
+  // Generate unique token
+  let token = generateAnonymousToken();
+  while (db.anonymousQueries.some((q) => q.trackingToken === token)) {
+    token = generateAnonymousToken();
   }
 
-  const newVote: VoteRecord = {
-    id: `VOTE-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-    submissionId,
-    eventId: sub.eventId,
-    voterName: voterName.trim(),
-    voterEmail: cleanEmail,
-    votedAt: new Date().toISOString(),
-    ipHash,
+  const newQuery: AnonymousQuery = {
+    id: `anon-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    trackingToken: token,
+    category: input.category.trim(),
+    departmentScope: input.departmentScope?.trim() || "General / Campus-wide",
+    urgency: input.urgency,
+    subject: input.subject.trim(),
+    description: input.description.trim(),
+    allowPublicDisplay: Boolean(input.allowPublicDisplay),
+    status: "SUBMITTED",
+    officialCouncilResponse: "",
+    isPubliclyPublished: false,
+    isReviewed: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 
-  db.votes.push(newVote);
-  sub.peoplesChoiceVotes = (sub.peoplesChoiceVotes || 0) + 1;
-
-  writeDb(db);
-  return { success: true, message: "Your vote has been recorded successfully!", votesCount: sub.peoplesChoiceVotes };
+  db.anonymousQueries.unshift(newQuery);
+  await saveDb(db);
+  return newQuery;
 }
 
-export async function getEventResults(): Promise<ResultsData> {
-  const db = ensureDb();
-  return db.results || EVENT_CONFIG.initialResults;
-}
+export async function updateAnonymousQuery(
+  id: string,
+  updates: Partial<AnonymousQuery>
+): Promise<AnonymousQuery | null> {
+  const db = await ensureDb();
+  const index = db.anonymousQueries.findIndex((q) => q.id === id);
+  if (index === -1) return null;
 
-export async function updateEventResults(resultsData: Partial<ResultsData>): Promise<ResultsData> {
-  const db = ensureDb();
-  db.results = {
-    ...(db.results || EVENT_CONFIG.initialResults),
-    ...resultsData,
-    lastUpdated: new Date().toISOString(),
+  const existing = db.anonymousQueries[index];
+  const updated: AnonymousQuery = {
+    ...existing,
+    ...updates,
+    updatedAt: new Date().toISOString(),
   };
-  writeDb(db);
-  return db.results;
+
+  if (updates.officialCouncilResponse && updates.officialCouncilResponse !== existing.officialCouncilResponse) {
+    updated.responseTimestamp = new Date().toISOString();
+  }
+
+  db.anonymousQueries[index] = updated;
+  await saveDb(db);
+  return updated;
 }
 
-export async function getAdminDashboardStats(): Promise<any> {
-  const db = ensureDb();
-  const totalRegistered = db.registrations.length;
-  const totalSubmissions = db.submissions.length;
-  const totalVotes = db.votes.length;
+// ---------------- EVENTS ----------------
+export async function getEvents(): Promise<CouncilEvent[]> {
+  const db = await ensureDb();
+  return db.events;
+}
 
-  const eventStats = EVENT_CONFIG.events.map((ev) => {
-    const regCount = db.registrations.filter((r) => r.eventId === ev.id).length;
-    const subCount = db.submissions.filter((s) => s.eventId === ev.id).length;
-    return {
-      eventId: ev.id,
-      title: ev.title,
-      registrations: regCount,
-      submissions: subCount,
-      maxCapacity: EVENT_CONFIG.event.entryLimitPerEvent || 30,
-      slotsAvailable: Math.max(0, (EVENT_CONFIG.event.entryLimitPerEvent || 30) - regCount),
-    };
-  });
+export async function getEventByIdOrSlug(
+  idOrSlug: string
+): Promise<CouncilEvent | null> {
+  const db = await ensureDb();
+  const match = db.events.find(
+    (e) => e.id === idOrSlug || e.slug.toLowerCase() === idOrSlug.toLowerCase()
+  );
+  return match || null;
+}
+
+export async function createEvent(
+  eventData: Omit<CouncilEvent, "id" | "createdAt">
+): Promise<CouncilEvent> {
+  const db = await ensureDb();
+  const newEvent: CouncilEvent = {
+    ...eventData,
+    id: `evt-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+  };
+  db.events.unshift(newEvent);
+  await saveDb(db);
+  return newEvent;
+}
+
+export async function updateEvent(
+  id: string,
+  updates: Partial<CouncilEvent>
+): Promise<CouncilEvent | null> {
+  const db = await ensureDb();
+  const index = db.events.findIndex((e) => e.id === id);
+  if (index === -1) return null;
+
+  db.events[index] = { ...db.events[index], ...updates };
+  await saveDb(db);
+  return db.events[index];
+}
+
+export async function deleteEvent(id: string): Promise<boolean> {
+  const db = await ensureDb();
+  const initialLength = db.events.length;
+  db.events = db.events.filter((e) => e.id !== id);
+  if (db.events.length !== initialLength) {
+    await saveDb(db);
+    return true;
+  }
+  return false;
+}
+
+// ---------------- COUNCIL MEMBERS ----------------
+export async function getCouncilMembers(): Promise<CouncilMember[]> {
+  const db = await ensureDb();
+  return [...db.councilMembers].sort((a, b) => a.displayOrder - b.displayOrder);
+}
+
+export async function createCouncilMember(
+  memberData: Omit<CouncilMember, "id">
+): Promise<CouncilMember> {
+  const db = await ensureDb();
+  const newMember: CouncilMember = {
+    ...memberData,
+    id: `mem-${Date.now()}`,
+  };
+  db.councilMembers.push(newMember);
+  await saveDb(db);
+  return newMember;
+}
+
+export async function updateCouncilMember(
+  id: string,
+  updates: Partial<CouncilMember>
+): Promise<CouncilMember | null> {
+  const db = await ensureDb();
+  const index = db.councilMembers.findIndex((m) => m.id === id);
+  if (index === -1) return null;
+
+  db.councilMembers[index] = { ...db.councilMembers[index], ...updates };
+  await saveDb(db);
+  return db.councilMembers[index];
+}
+
+export async function deleteCouncilMember(id: string): Promise<boolean> {
+  const db = await ensureDb();
+  const initialLength = db.councilMembers.length;
+  db.councilMembers = db.councilMembers.filter((m) => m.id !== id);
+  if (db.councilMembers.length !== initialLength) {
+    await saveDb(db);
+    return true;
+  }
+  return false;
+}
+
+// ---------------- CLUBS ----------------
+export async function getClubs(): Promise<Club[]> {
+  const db = await ensureDb();
+  return db.clubs;
+}
+
+export async function createClub(clubData: Omit<Club, "id">): Promise<Club> {
+  const db = await ensureDb();
+  const newClub: Club = {
+    ...clubData,
+    id: `club-${Date.now()}`,
+  };
+  db.clubs.push(newClub);
+  await saveDb(db);
+  return newClub;
+}
+
+export async function updateClub(
+  id: string,
+  updates: Partial<Club>
+): Promise<Club | null> {
+  const db = await ensureDb();
+  const index = db.clubs.findIndex((c) => c.id === id);
+  if (index === -1) return null;
+
+  db.clubs[index] = { ...db.clubs[index], ...updates };
+  await saveDb(db);
+  return db.clubs[index];
+}
+
+export async function deleteClub(id: string): Promise<boolean> {
+  const db = await ensureDb();
+  const initialLength = db.clubs.length;
+  db.clubs = db.clubs.filter((c) => c.id !== id);
+  if (db.clubs.length !== initialLength) {
+    await saveDb(db);
+    return true;
+  }
+  return false;
+}
+
+// ---------------- NOTICES ----------------
+export async function getNotices(): Promise<Notice[]> {
+  const db = await ensureDb();
+  return [...db.notices].sort(
+    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
+}
+
+export async function createNotice(
+  noticeData: Omit<Notice, "id" | "publishedAt">
+): Promise<Notice> {
+  const db = await ensureDb();
+  const newNotice: Notice = {
+    ...noticeData,
+    id: `not-${Date.now()}`,
+    publishedAt: new Date().toISOString(),
+  };
+  db.notices.unshift(newNotice);
+  await saveDb(db);
+  return newNotice;
+}
+
+export async function updateNotice(
+  id: string,
+  updates: Partial<Notice>
+): Promise<Notice | null> {
+  const db = await ensureDb();
+  const index = db.notices.findIndex((n) => n.id === id);
+  if (index === -1) return null;
+
+  db.notices[index] = { ...db.notices[index], ...updates };
+  await saveDb(db);
+  return db.notices[index];
+}
+
+export async function deleteNotice(id: string): Promise<boolean> {
+  const db = await ensureDb();
+  const initialLength = db.notices.length;
+  db.notices = db.notices.filter((n) => n.id !== id);
+  if (db.notices.length !== initialLength) {
+    await saveDb(db);
+    return true;
+  }
+  return false;
+}
+
+// ---------------- IDENTIFIED FORM 1: EVENT REGISTRATIONS ----------------
+export async function getEventRegistrations(): Promise<EventRegistration[]> {
+  const db = await ensureDb();
+  return [...db.eventRegistrations].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
+export async function createEventRegistration(
+  input: Omit<EventRegistration, "id" | "referenceNumber" | "createdAt" | "status" | "isContacted">
+): Promise<EventRegistration> {
+  const db = await ensureDb();
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const ref = `MCOE-EVT-2026-${randomSuffix}`;
+
+  const newReg: EventRegistration = {
+    ...input,
+    id: `reg-${Date.now()}`,
+    referenceNumber: ref,
+    status: "REGISTERED",
+    isContacted: false,
+    createdAt: new Date().toISOString(),
+  };
+
+  db.eventRegistrations.unshift(newReg);
+  await saveDb(db);
+  return newReg;
+}
+
+export async function updateEventRegistration(
+  id: string,
+  updates: Partial<EventRegistration>
+): Promise<EventRegistration | null> {
+  const db = await ensureDb();
+  const index = db.eventRegistrations.findIndex((r) => r.id === id);
+  if (index === -1) return null;
+
+  db.eventRegistrations[index] = { ...db.eventRegistrations[index], ...updates };
+  await saveDb(db);
+  return db.eventRegistrations[index];
+}
+
+// ---------------- IDENTIFIED FORM 2: STUDENT VOICE & SUGGESTIONS ----------------
+export async function getStudentVoiceSubmissions(): Promise<StudentVoiceSubmission[]> {
+  const db = await ensureDb();
+  return [...db.studentVoiceSubmissions].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
+export async function createStudentVoiceSubmission(
+  input: Omit<StudentVoiceSubmission, "id" | "referenceNumber" | "createdAt" | "status" | "isReviewed">
+): Promise<StudentVoiceSubmission> {
+  const db = await ensureDb();
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const ref = `MCOE-VOICE-${randomSuffix}`;
+
+  const newSubmission: StudentVoiceSubmission = {
+    ...input,
+    id: `voice-${Date.now()}`,
+    referenceNumber: ref,
+    status: "RECEIVED",
+    isReviewed: false,
+    createdAt: new Date().toISOString(),
+  };
+
+  db.studentVoiceSubmissions.unshift(newSubmission);
+  await saveDb(db);
+  return newSubmission;
+}
+
+export async function updateStudentVoiceSubmission(
+  id: string,
+  updates: Partial<StudentVoiceSubmission>
+): Promise<StudentVoiceSubmission | null> {
+  const db = await ensureDb();
+  const index = db.studentVoiceSubmissions.findIndex((s) => s.id === id);
+  if (index === -1) return null;
+
+  db.studentVoiceSubmissions[index] = {
+    ...db.studentVoiceSubmissions[index],
+    ...updates,
+  };
+  await saveDb(db);
+  return db.studentVoiceSubmissions[index];
+}
+
+// ---------------- IDENTIFIED FORM 3: SPONSORSHIP ENQUIRIES ----------------
+export async function getSponsorshipEnquiries(): Promise<SponsorshipEnquiry[]> {
+  const db = await ensureDb();
+  return [...db.sponsorshipEnquiries].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
+export async function createSponsorshipEnquiry(
+  input: Omit<SponsorshipEnquiry, "id" | "referenceNumber" | "createdAt" | "status" | "isContacted">
+): Promise<SponsorshipEnquiry> {
+  const db = await ensureDb();
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const ref = `MCOE-SPON-${randomSuffix}`;
+
+  const newEnquiry: SponsorshipEnquiry = {
+    ...input,
+    id: `spon-${Date.now()}`,
+    referenceNumber: ref,
+    status: "NEW",
+    isContacted: false,
+    createdAt: new Date().toISOString(),
+  };
+
+  db.sponsorshipEnquiries.unshift(newEnquiry);
+  await saveDb(db);
+  return newEnquiry;
+}
+
+export async function updateSponsorshipEnquiry(
+  id: string,
+  updates: Partial<SponsorshipEnquiry>
+): Promise<SponsorshipEnquiry | null> {
+  const db = await ensureDb();
+  const index = db.sponsorshipEnquiries.findIndex((s) => s.id === id);
+  if (index === -1) return null;
+
+  db.sponsorshipEnquiries[index] = {
+    ...db.sponsorshipEnquiries[index],
+    ...updates,
+  };
+  await saveDb(db);
+  return db.sponsorshipEnquiries[index];
+}
+
+// ---------------- ADMIN KPI METRICS ----------------
+export async function getAdminStats() {
+  const db = await ensureDb();
+  const activeEvents = db.events.filter(
+    (e) => e.status === "UPCOMING" || e.status === "ONGOING"
+  ).length;
+  const totalRegistrations = db.eventRegistrations.length;
+  const unreadAnonymousQueries = db.anonymousQueries.filter(
+    (q) => !q.isReviewed || q.status === "SUBMITTED"
+  ).length;
+  const urgentAnonymousQueries = db.anonymousQueries.filter(
+    (q) => q.urgency === "HIGH" && q.status !== "RESOLVED"
+  ).length;
+  const unreadStudentVoice = db.studentVoiceSubmissions.filter(
+    (v) => !v.isReviewed || v.status === "RECEIVED"
+  ).length;
+  const pendingSponsorships = db.sponsorshipEnquiries.filter(
+    (s) => s.status === "NEW" || s.status === "IN_DISCUSSION"
+  ).length;
 
   return {
-    totalRegistered,
-    totalSubmissions,
-    totalVotes,
-    eventStats,
+    activeEvents,
+    totalEvents: db.events.length,
+    totalRegistrations,
+    unreadAnonymousQueries,
+    urgentAnonymousQueries,
+    totalAnonymousQueries: db.anonymousQueries.length,
+    unreadStudentVoice,
+    totalStudentVoice: db.studentVoiceSubmissions.length,
+    pendingSponsorships,
+    totalSponsorships: db.sponsorshipEnquiries.length,
+    totalNotices: db.notices.length,
+    totalMembers: db.councilMembers.length,
+    totalClubs: db.clubs.length,
   };
 }
-
-export const getDashboardStats = getAdminDashboardStats;

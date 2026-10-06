@@ -1,361 +1,375 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
+  Shield,
   Menu,
   X,
   Lock,
-  ExternalLink,
-  ChevronDown,
-  Palette,
-  Video,
-  Trash2,
-  Sparkles,
-  FileSpreadsheet,
-  Users,
-  Award,
   Calendar,
+  ExternalLink,
+  ChevronRight,
+  MessageSquare,
+  Sparkles,
+  Users,
+  Layers,
   FileText,
-  Building2,
-  FolderOpen,
+  Instagram,
+  Radio,
 } from "lucide-react";
-import { EVENT_CONFIG } from "@/config/eventConfig";
+import { COUNCIL_CONFIG } from "@/config/councilConfig";
+import { SiteSettings } from "@/lib/types";
 
 interface NavbarProps {
-  onOpenRegister: (eventId?: string) => void;
-  onOpenSubmit: () => void;
-  onOpenAdmin: () => void;
+  settings?: SiteSettings;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenRegister, onOpenSubmit, onOpenAdmin }) => {
+export default function Navbar({ settings }: NavbarProps) {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activitiesDropdownOpen, setActivitiesDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const eventIcons: Record<string, React.ReactNode> = {
-    "poster-making": <Palette className="w-4 h-4 text-emerald-600" />,
-    "reel-making": <Video className="w-4 h-4 text-orange-600" />,
-    "waste-hunt": <Trash2 className="w-4 h-4 text-sky-600" />,
-  };
+  const instagramUrl =
+    settings?.instagramUrl || COUNCIL_CONFIG.socials.instagram.url;
+  const instagramHandle =
+    settings?.instagramHandle || COUNCIL_CONFIG.socials.instagram.handle;
+  const whatsappUrl =
+    settings?.whatsappChannelUrl || COUNCIL_CONFIG.socials.whatsappChannel.url;
 
-  const handleNavClick = () => {
-    setMobileMenuOpen(false);
-    setActivitiesDropdownOpen(false);
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "About Council", href: "/about" },
+    { name: "Events & Fests", href: "/events" },
+    { name: "Council Team", href: "/team" },
+    { name: "Clubs & Chapters", href: "/clubs" },
+    { name: "Notice Board", href: "/notices" },
+    {
+      name: "Anonymous Portal",
+      href: "/anonymous-portal",
+      isSpecial: true,
+      badge: "100% Shield",
+    },
+    { name: "Student Voice", href: "/student-voice" },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      {/* Top Banner with Direct Links to Google Drive, Sheet, and Council Admin */}
-      <div className="bg-emerald-900 text-white text-[11px] sm:text-xs py-1.5 px-4 font-medium border-b border-emerald-800">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>{EVENT_CONFIG.college.fullName} • NAAC &apos;A+&apos; Grade Accredited</span>
+    <>
+      {/* 1. TOP UTILITY BAR (Slim prestigious institutional strip) */}
+      <div className="bg-slate-900 text-slate-200 text-xs py-2 px-4 border-b border-slate-800 z-50 relative font-sans">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+          {/* College location & affiliation */}
+          <div className="flex items-center gap-2 text-center sm:text-left text-slate-300">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-semibold text-slate-100">
+              PES’s Modern College of Engineering, Pune
+            </span>
+            <span className="hidden md:inline text-slate-400">
+              • Shivajinagar, Pune – 411005 (SPPU Affiliated)
+            </span>
+            <span className="hidden lg:inline-block px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-300 rounded border border-amber-500/30">
+              Tenure {COUNCIL_CONFIG.council.tenure}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 text-emerald-100">
-            {/* Direct Google Sheet Link */}
+          {/* Broadcast Social Pills (Prominent Quick Access) */}
+          <div className="flex items-center gap-2 flex-wrap justify-center">
             <a
-              href={EVENT_CONFIG.googleSheet.sheetUrl}
+              href={whatsappUrl}
               target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 hover:text-white text-[11px] bg-emerald-950/80 hover:bg-emerald-950 px-2 py-0.5 rounded border border-emerald-700/60 transition-colors"
-              title="Open Official Google Sheet Roster"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 text-xs font-medium border border-emerald-700/50 transition-all hover:scale-105 active:scale-95 shadow-sm"
+              title="Join Official WhatsApp Broadcast Channel"
             >
-              <FileSpreadsheet className="w-3 h-3 text-emerald-400" />
-              <span>Google Sheet</span>
+              <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span>Join WhatsApp Channel</span>
               <ExternalLink className="w-2.5 h-2.5 opacity-70" />
             </a>
 
-            {/* Direct Google Drive Link */}
             <a
-              href={EVENT_CONFIG.googleDrive.rootFolderUrl}
+              href={instagramUrl}
               target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 hover:text-white text-[11px] bg-emerald-950/80 hover:bg-emerald-950 px-2 py-0.5 rounded border border-emerald-700/60 transition-colors"
-              title="Open Official Google Drive Folder"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 hover:bg-pink-950 text-pink-300 text-xs font-medium border border-pink-800/40 transition-all hover:scale-105 active:scale-95 shadow-sm"
+              title="Follow Official Instagram"
             >
-              <FolderOpen className="w-3 h-3 text-emerald-400" />
-              <span>Drive</span>
+              <Instagram className="w-3.5 h-3.5 text-pink-400" />
+              <span>{instagramHandle}</span>
               <ExternalLink className="w-2.5 h-2.5 opacity-70" />
             </a>
-
-            {/* Council Desk Login */}
-            <button
-              onClick={onOpenAdmin}
-              className="inline-flex items-center gap-1 hover:text-white cursor-pointer text-[11px] bg-emerald-800 hover:bg-emerald-700 px-2 py-0.5 rounded border border-emerald-600 transition-colors font-semibold"
-              title="Organizer Portal Login (Admin@123)"
-            >
-              <Lock className="w-3 h-3 text-emerald-300" />
-              <span>Council Desk</span>
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Brand Logo Header (Links to #home) */}
-          <a href="#home" className="flex items-center gap-3 group focus:outline-hidden">
-            {/* College Logo */}
-            <div className="relative w-11 h-11 flex-shrink-0 bg-white border border-slate-200 rounded-lg p-1 shadow-2xs flex items-center justify-center overflow-hidden">
-              <img
-                src={EVENT_CONFIG.college.logos.college}
-                alt="PES Modern College of Engineering Logo"
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = "none";
-                }}
-              />
-            </div>
-
-            {/* Student Council Logo */}
-            <div className="relative w-11 h-11 flex-shrink-0 bg-white border border-slate-200 rounded-lg p-1 shadow-2xs flex items-center justify-center overflow-hidden">
-              <img
-                src={EVENT_CONFIG.college.logos.council}
-                alt="Student Council Logo"
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = "none";
-                }}
-              />
+      {/* 2. MAIN ELEVATED STICKY NAVBAR */}
+      <header
+        className={`sticky top-0 z-40 w-full transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200/80 py-2.5"
+            : "bg-white border-b border-slate-100 py-3.5"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          {/* Institutional Crest & Council Title */}
+          <Link
+            href="/"
+            className="flex items-center gap-3 group focus:outline-none"
+          >
+            {/* Crest Emblem / Monogram */}
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-red-800 via-red-900 to-slate-950 flex items-center justify-center text-white shadow-md shadow-red-900/20 group-hover:scale-105 transition-transform border border-amber-500/40">
+              <div className="absolute inset-0 rounded-xl bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-400/20 via-transparent to-transparent" />
+              <Shield className="w-6 h-6 text-amber-400 stroke-[2.2]" />
             </div>
 
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                  STUDENT COUNCIL
+                <span className="font-extrabold text-slate-900 tracking-tight text-base sm:text-lg leading-tight group-hover:text-red-800 transition-colors font-heading">
+                  STUDENTS’ COUNCIL
                 </span>
-                <span className="text-[10px] font-semibold text-slate-500 hidden md:inline">PES MCOE PUNE</span>
               </div>
-              <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-tight group-hover:text-emerald-700 transition-colors font-heading">
-                STUDENT COUNCIL
+              <span className="text-[11px] sm:text-xs font-bold text-red-800 tracking-wide uppercase">
+                PES’s Modern College of Engineering
               </span>
-              <span className="text-[11px] font-medium text-slate-500">Official Student Governance Portal</span>
+              <span className="text-[10px] text-slate-700 hidden sm:block">
+                Shivajinagar, Pune • SPPU Affiliated
+              </span>
             </div>
-          </a>
+          </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-1 text-xs sm:text-sm font-semibold text-slate-700">
-            {/* Home */}
-            <a
-              href="#home"
-              className="px-3 py-1.5 rounded-lg hover:text-emerald-800 hover:bg-emerald-50 transition-colors font-bold text-slate-900"
-            >
-              Home
-            </a>
+          {/* Desktop Navigation Links */}
+          <nav className="hidden xl:flex items-center gap-1 font-medium text-sm">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
 
-            {/* Council Members */}
-            <a
-              href="#council-members"
-              className="px-3 py-1.5 rounded-lg hover:text-emerald-800 hover:bg-emerald-50 transition-colors flex items-center gap-1"
-            >
-              <Users className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Council Members</span>
-            </a>
+              if (link.isSpecial) {
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      isActive
+                        ? "bg-slate-900 text-amber-400 shadow-sm"
+                        : "bg-slate-900/90 text-amber-300 hover:bg-slate-900 hover:text-amber-200 border border-amber-500/30 shadow-xs"
+                    }`}
+                  >
+                    <Lock className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{link.name}</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] bg-amber-500 text-slate-950 font-bold tracking-wider uppercase">
+                      🔒 Shield
+                    </span>
+                  </Link>
+                );
+              }
 
-            {/* About Council */}
-            <a
-              href="#about-council"
-              className="px-3 py-1.5 rounded-lg hover:text-emerald-800 hover:bg-emerald-50 transition-colors"
-            >
-              About Council
-            </a>
-
-            {/* Activities Dropdown: Swachh Bharat Week (Oct 7) */}
-            <div className="relative" onMouseLeave={() => setActivitiesDropdownOpen(false)}>
-              <button
-                onClick={() => setActivitiesDropdownOpen(!activitiesDropdownOpen)}
-                onMouseEnter={() => setActivitiesDropdownOpen(true)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer text-emerald-800 font-bold"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-orange-600" />
-                <span>Swachh Bharat Week (Oct 7)</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-150 ${activitiesDropdownOpen ? "rotate-180" : ""}`} />
-              </button>
-
-              {activitiesDropdownOpen && (
-                <div className="absolute top-full left-0 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-3 py-1.5 text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">
-                    3 Competitions (Oct 7 • 30 Max Entries)
-                  </div>
-                  {EVENT_CONFIG.events.map((ev) => (
-                    <a
-                      key={ev.id}
-                      href="#events"
-                      onClick={() => setActivitiesDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-50 text-xs font-semibold text-slate-800 hover:text-emerald-800 transition-colors"
-                    >
-                      <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        {eventIcons[ev.id]}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-bold">{ev.title}</span>
-                        <span className="text-[10px] text-slate-500 font-normal">
-                          {ev.teamSize} • Max 30
-                        </span>
-                      </div>
-                    </a>
-                  ))}
-                  <div className="border-t border-slate-100 mt-1 pt-1 px-3 space-y-0.5">
-                    <a
-                      href="#waste-hunt-zones"
-                      onClick={() => setActivitiesDropdownOpen(false)}
-                      className="text-[11px] font-bold text-sky-700 hover:underline block py-1"
-                    >
-                      Waste Hunt Zones A–E →
-                    </a>
-                    <a
-                      href="#submit"
-                      onClick={() => setActivitiesDropdownOpen(false)}
-                      className="text-[11px] font-bold text-orange-700 hover:underline block py-1"
-                    >
-                      Submit Entry / Upload Work →
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Results */}
-            <a
-              href="#results"
-              className="px-3 py-1.5 rounded-lg hover:text-emerald-800 hover:bg-emerald-50 transition-colors"
-            >
-              Results Desk
-            </a>
-
-            {/* Certificate Desk */}
-            <a
-              href="#certificates"
-              className="px-3 py-1.5 rounded-lg hover:text-emerald-800 hover:bg-emerald-50 transition-colors flex items-center gap-1 font-semibold text-emerald-800"
-            >
-              <Award className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Certificates</span>
-            </a>
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`px-3 py-1.5 rounded-md transition-colors text-xs font-semibold ${
+                    isActive
+                      ? "text-red-800 bg-red-50 font-bold"
+                      : "text-slate-700 hover:text-red-800 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </nav>
 
-          {/* Action CTAs */}
-          <div className="hidden sm:flex items-center gap-2">
-            <button
-              onClick={() => onOpenRegister()}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl transition-all shadow-sm active:scale-98 cursor-pointer"
+          {/* Right Action Buttons */}
+          <div className="hidden sm:flex items-center gap-2.5">
+            {/* Quick Anonymous Query Button */}
+            <Link
+              href="/anonymous-portal"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 text-xs font-bold border border-amber-500/30 transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
             >
-              <FileText className="w-3.5 h-3.5" />
-              <span>Register Squad</span>
-            </button>
+              <Lock className="w-3.5 h-3.5 text-amber-400" />
+              <span>Anonymous Query 🔒</span>
+            </Link>
+
+            {/* Explore Events Button */}
+            <Link
+              href="/events"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gradient-to-r from-red-800 to-red-700 hover:from-red-900 hover:to-red-800 text-white text-xs font-bold shadow-sm shadow-red-800/20 transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 border border-red-900"
+            >
+              <Calendar className="w-3.5 h-3.5 text-amber-300" />
+              <span>Explore Events</span>
+            </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <button
-              onClick={() => onOpenRegister()}
-              className="px-3 py-1.5 text-xs font-bold text-white bg-emerald-700 rounded-lg shadow-xs"
-            >
-              Register
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-700 hover:text-emerald-700 hover:bg-slate-100 rounded-lg focus:outline-hidden cursor-pointer"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+          {/* Mobile Hamburger Toggle */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="xl:hidden p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-red-800"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6 text-slate-900" />
+            ) : (
+              <Menu className="w-6 h-6 text-slate-900" />
+            )}
+          </button>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Menu Drawer */}
+      {/* 3. MOBILE SLIDE-OVER NAVIGATION DRAWER */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 shadow-xl">
-          <div className="grid grid-cols-2 gap-2 pb-3 border-b border-slate-100">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenRegister();
-              }}
-              className="w-full py-2.5 px-3 text-center text-xs font-bold text-white bg-emerald-700 rounded-lg shadow-xs cursor-pointer"
-            >
-              Register Squad (Oct 7)
-            </button>
-            <a
-              href={EVENT_CONFIG.googleSheet.sheetUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full py-2.5 px-3 text-center text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-center gap-1"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>Google Sheet</span>
-            </a>
-          </div>
+        <div className="fixed inset-0 z-50 xl:hidden">
+          {/* Backdrop overlay */}
+          <div
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+          />
 
-          <div className="space-y-1 text-xs">
-            <a
-              href="#home"
-              onClick={handleNavClick}
-              className="block px-3 py-2 font-bold text-emerald-800 hover:bg-emerald-50 rounded-md"
-            >
-              Home (Student Council)
-            </a>
+          {/* Slide-over panel */}
+          <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl flex flex-col justify-between overflow-y-auto border-l border-slate-200 animate-in slide-in-from-right duration-200">
+            <div>
+              {/* Drawer Header */}
+              <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-red-800 flex items-center justify-center text-white border border-amber-400">
+                    <Shield className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm tracking-tight text-white font-heading">
+                      PES MCOE COUNCIL
+                    </h3>
+                    <p className="text-[10px] text-amber-300">
+                      Tenure {COUNCIL_CONFIG.council.tenure}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none"
+                  aria-label="Close menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-            <a
-              href="#council-members"
-              onClick={handleNavClick}
-              className="block px-3 py-2 font-medium text-slate-700 hover:bg-emerald-50 rounded-md"
-            >
-              Council Members & Team
-            </a>
+              {/* Anonymous Portal Urgent Banner in Mobile Drawer */}
+              <div className="p-3 bg-amber-50 border-b border-amber-200">
+                <Link
+                  href="/anonymous-portal"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block p-3 rounded-xl bg-slate-900 text-white shadow-sm border border-amber-500/40"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400">
+                      <Lock className="w-3.5 h-3.5" />
+                      100% Anonymous Portal
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded text-[9px] bg-amber-400 text-slate-950 font-bold">
+                      Zero PII
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-tight">
+                    Submit campus/academic issues without identity tracking & get official Council resolution notes.
+                  </p>
+                </Link>
+              </div>
 
-            <a
-              href="#about-council"
-              onClick={handleNavClick}
-              className="block px-3 py-2 font-medium text-slate-700 hover:bg-emerald-50 rounded-md"
-            >
-              About Council & Wings
-            </a>
+              {/* Navigation Links */}
+              <div className="px-3 py-4 space-y-1">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href;
 
-            <div className="py-1 px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              Swachh Bharat Week (Oct 7)
+                  return (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                        isActive
+                          ? "bg-red-50 text-red-900 border-l-4 border-red-800 font-bold"
+                          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        {link.href === "/" && <Layers className="w-4 h-4 text-slate-500" />}
+                        {link.href === "/about" && <Shield className="w-4 h-4 text-slate-500" />}
+                        {link.href === "/events" && <Calendar className="w-4 h-4 text-slate-500" />}
+                        {link.href === "/team" && <Users className="w-4 h-4 text-slate-500" />}
+                        {link.href === "/clubs" && <Sparkles className="w-4 h-4 text-slate-500" />}
+                        {link.href === "/notices" && <FileText className="w-4 h-4 text-slate-500" />}
+                        {link.href === "/anonymous-portal" && <Lock className="w-4 h-4 text-amber-500" />}
+                        {link.href === "/student-voice" && <MessageSquare className="w-4 h-4 text-slate-500" />}
+                        <span>{link.name}</span>
+                      </span>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Official Social Broadcast Cards in Drawer */}
+              <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/70 space-y-2">
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  Official Broadcast Channels
+                </p>
+
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 text-xs font-semibold"
+                >
+                  <span className="flex items-center gap-2">
+                    <Radio className="w-4 h-4 text-emerald-600 animate-pulse" />
+                    <span>Join WhatsApp Channel</span>
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-emerald-600" />
+                </a>
+
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 text-xs font-semibold"
+                >
+                  <span className="flex items-center gap-2">
+                    <Instagram className="w-4 h-4 text-pink-600" />
+                    <span>Follow {instagramHandle}</span>
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-pink-600" />
+                </a>
+              </div>
             </div>
-            {EVENT_CONFIG.events.map((ev) => (
-              <a
-                key={ev.id}
-                href="#events"
-                onClick={handleNavClick}
-                className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 rounded-md"
+
+            {/* Drawer Footer */}
+            <div className="p-4 border-t border-slate-200 bg-white">
+              <Link
+                href="/admin/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-slate-700 hover:text-red-800"
               >
-                <span>{ev.number}.</span>
-                <span>{ev.title} (Max 30)</span>
-              </a>
-            ))}
-
-            <a
-              href="#submit"
-              onClick={handleNavClick}
-              className="block px-3 py-2 font-medium text-slate-700 hover:bg-emerald-50 rounded-md"
-            >
-              Submission & Drive Desk
-            </a>
-
-            <a
-              href="#results"
-              onClick={handleNavClick}
-              className="block px-3 py-2 font-medium text-slate-700 hover:bg-emerald-50 rounded-md"
-            >
-              Results & Leaderboard
-            </a>
-
-            <a
-              href="#certificates"
-              onClick={handleNavClick}
-              className="block px-3 py-2 font-bold text-emerald-800 hover:bg-emerald-50 rounded-md"
-            >
-              E-Certificate Desk
-            </a>
+                <Lock className="w-3.5 h-3.5 text-slate-600" />
+                <span>Council Admin Login</span>
+              </Link>
+              <p className="text-[10px] text-center text-slate-700 mt-1">
+                Progressive Education Society’s Modern College of Engineering
+              </p>
+            </div>
           </div>
         </div>
       )}
-    </header>
+    </>
   );
-};
+}
