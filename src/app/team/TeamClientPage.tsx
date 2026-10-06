@@ -11,12 +11,11 @@ import {
   GraduationCap,
   Sparkles,
   Mail,
-  Linkedin,
-  Instagram,
   UserCheck,
   Search,
   Building,
 } from "lucide-react";
+import { LinkedinIcon, InstagramIcon } from "@/components/Icons";
 import { CouncilMember, SiteSettings, CouncilWing } from "@/lib/types";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 
@@ -244,7 +243,7 @@ export default function TeamClientPage({
                           className="p-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                           title="LinkedIn Profile"
                         >
-                          <Linkedin className="w-3.5 h-3.5" />
+                          <LinkedinIcon className="w-3.5 h-3.5" />
                         </a>
                       )}
 
@@ -256,7 +255,7 @@ export default function TeamClientPage({
                           className="p-1.5 rounded-lg bg-slate-100 hover:bg-pink-50 hover:text-pink-700 transition-colors"
                           title="Instagram Profile"
                         >
-                          <Instagram className="w-3.5 h-3.5" />
+                          <InstagramIcon className="w-3.5 h-3.5" />
                         </a>
                       )}
                     </div>

@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Radio, Instagram, Lock } from "lucide-react";
+import { Radio, Lock } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 import { SiteSettings } from "@/lib/types";
 
@@ -37,7 +38,7 @@ export default function MobileQuickBar({ settings }: MobileQuickBarProps) {
           rel="noopener noreferrer"
           className="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-slate-900 hover:bg-pink-950 text-pink-300 border border-pink-700/40 text-[10px] font-bold transition-transform active:scale-95 text-center"
         >
-          <Instagram className="w-4 h-4 text-pink-400 mb-0.5" />
+          <InstagramIcon className="w-4 h-4 text-pink-400 mb-0.5" />
           <span className="truncate">Instagram</span>
         </a>
 

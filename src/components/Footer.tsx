@@ -8,10 +8,10 @@ import {
   Mail,
   Phone,
   Radio,
-  Instagram,
   Lock,
   Download,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 import { SiteSettings } from "@/lib/types";
 
@@ -94,7 +94,7 @@ export default function Footer({ settings }: FooterProps) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-950 hover:bg-pink-900 text-pink-300 text-xs font-semibold border border-pink-700/50 transition-colors"
               >
-                <Instagram className="w-3.5 h-3.5 text-pink-400" />
+                <InstagramIcon className="w-3.5 h-3.5 text-pink-400" />
                 <span>{instagramHandle}</span>
               </a>
             </div>

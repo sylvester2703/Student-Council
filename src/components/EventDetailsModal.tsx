@@ -11,13 +11,13 @@ import {
   FileText,
   Phone,
   Radio,
-  Instagram,
   Share2,
   ExternalLink,
   CheckCircle2,
   AlertCircle,
   Download,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { CouncilEvent, SiteSettings } from "@/lib/types";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 
@@ -242,7 +242,7 @@ export default function EventDetailsModal({
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-pink-950 hover:bg-pink-900 text-pink-300 text-[11px] font-semibold border border-pink-700/40"
                 >
-                  <Instagram className="w-3 h-3 text-pink-400" />
+                  <InstagramIcon className="w-3 h-3 text-pink-400" />
                   <span>Instagram</span>
                 </a>
               </div>

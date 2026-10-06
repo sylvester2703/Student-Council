@@ -157,6 +157,8 @@ export interface Notice {
   publishedAt: string;
 }
 
+export type RegistrationStatus = "REGISTERED" | "CONFIRMED" | "WAITLISTED" | "CANCELLED";
+
 export interface EventRegistration {
   id: string;
   referenceNumber: string; // e.g. "MCOE-EVT-2026-8291"
@@ -172,7 +174,7 @@ export interface EventRegistration {
   teamName?: string;
   teamSize: number;
   message?: string;
-  status: "REGISTERED" | "CONFIRMED" | "WAITLISTED" | "CANCELLED";
+  status: RegistrationStatus;
   adminNotes?: string;
   isContacted: boolean;
   createdAt: string;

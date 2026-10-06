@@ -16,9 +16,9 @@ import {
   Users,
   Layers,
   FileText,
-  Instagram,
   Radio,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 import { SiteSettings } from "@/lib/types";
 
@@ -106,7 +106,7 @@ export default function Navbar({ settings }: NavbarProps) {
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 hover:bg-pink-950 text-pink-300 text-xs font-medium border border-pink-800/40 transition-all hover:scale-105 active:scale-95 shadow-sm"
               title="Follow Official Instagram"
             >
-              <Instagram className="w-3.5 h-3.5 text-pink-400" />
+              <InstagramIcon className="w-3.5 h-3.5 text-pink-400" />
               <span>{instagramHandle}</span>
               <ExternalLink className="w-2.5 h-2.5 opacity-70" />
             </a>
@@ -345,7 +345,7 @@ export default function Navbar({ settings }: NavbarProps) {
                   className="flex items-center justify-between p-2.5 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-900 text-xs font-semibold"
                 >
                   <span className="flex items-center gap-2">
-                    <Instagram className="w-4 h-4 text-pink-600" />
+                    <InstagramIcon className="w-4 h-4 text-pink-600" />
                     <span>Follow {instagramHandle}</span>
                   </span>
                   <ExternalLink className="w-3.5 h-3.5 text-pink-600" />

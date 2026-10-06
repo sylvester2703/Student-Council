@@ -7,13 +7,13 @@ import {
   Lock,
   ArrowRight,
   Radio,
-  Instagram,
   Bell,
   Download,
   Sparkles,
   ChevronRight,
   CheckCircle2,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 import { Notice, SiteSettings } from "@/lib/types";
 
@@ -155,7 +155,7 @@ export default function HeroSection({
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-500/20 via-pink-500/20 to-purple-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
-                  <Instagram className="w-6 h-6 text-pink-400" />
+                  <InstagramIcon className="w-6 h-6 text-pink-400" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">

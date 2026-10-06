@@ -9,15 +9,11 @@ import {
   Users,
   Building,
   Radio,
-  Instagram,
   ExternalLink,
   Search,
-  Code2,
-  Trophy,
-  HeartHandshake,
   Layers,
-  Phone,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { Club, SiteSettings } from "@/lib/types";
 
 interface ClubsClientPageProps {
@@ -227,7 +223,7 @@ export default function ClubsClientPage({
                           className="p-1.5 rounded-lg bg-pink-50 text-pink-700 hover:bg-pink-100 transition-colors"
                           title="Instagram Page"
                         >
-                          <Instagram className="w-3.5 h-3.5" />
+                          <InstagramIcon className="w-3.5 h-3.5" />
                         </a>
                       )}
 

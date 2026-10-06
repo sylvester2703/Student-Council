@@ -16,12 +16,12 @@ import {
   Check,
   Building2,
   Radio,
-  Instagram,
   Sparkles,
   Lock,
   ArrowRight,
   Send,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { SiteSettings, StudentVoiceSubmission, SponsorshipEnquiry, PartnershipType } from "@/lib/types";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 
@@ -674,7 +674,7 @@ export default function StudentVoiceClientPage({
                     <Radio className="w-3 h-3" /> WhatsApp
                   </a>
                   <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="text-pink-700 font-bold text-xs hover:underline flex items-center gap-1">
-                    <Instagram className="w-3 h-3" /> Instagram
+                    <InstagramIcon className="w-3 h-3" /> Instagram
                   </a>
                 </div>
               </div>

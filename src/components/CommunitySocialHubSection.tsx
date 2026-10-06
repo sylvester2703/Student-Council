@@ -3,15 +3,14 @@
 import React from "react";
 import {
   Radio,
-  Instagram,
   Handshake,
   QrCode,
   ArrowRight,
   ExternalLink,
   Sparkles,
-  ShieldCheck,
   Building2,
 } from "lucide-react";
+import { InstagramIcon } from "@/components/Icons";
 import { COUNCIL_CONFIG } from "@/config/councilConfig";
 import { SiteSettings } from "@/lib/types";
 
@@ -100,7 +99,7 @@ export default function CommunitySocialHubSection({
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 rounded-2xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
-                  <Instagram className="w-6 h-6" />
+                  <InstagramIcon className="w-6 h-6" />
                 </div>
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30">
                   {instagramHandle}
